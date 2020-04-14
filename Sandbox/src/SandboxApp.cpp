@@ -129,8 +129,6 @@ public:
 		if (!Hazel::Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT))
 			SquareMovement(ts);
 
-		HZ_TRACE("Delta Time: {0} ({1}ms) ", ts.GetSeconds(), ts.GetMilliseconds());
-
 		Hazel::RenderCommand::SetClearColor(glm::vec4{ 0.1, 0.1, 0.1, 1 });
 		Hazel::RenderCommand::Clear();
 

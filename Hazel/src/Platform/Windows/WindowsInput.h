@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Hazel/Input.h"
-#include "Hazel/Core.h"
-#include "Hazel/Window.h"
+#include "Hazel/Core/Input.h"
+#include "Hazel/Core/Core.h"
+#include "Hazel/Core/Window.h"
 
 namespace Hazel
 {

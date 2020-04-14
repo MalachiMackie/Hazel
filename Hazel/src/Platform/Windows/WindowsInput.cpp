@@ -1,8 +1,8 @@
 #include "hzpch.h"
 #include "WindowsInput.h"
 
-#include "Hazel/Window.h"
-#include "Hazel/Application.h"
+#include "Hazel/Core/Window.h"
+#include "Hazel/Core/Application.h"
 
 #include <GLFW/glfw3.h>
 
