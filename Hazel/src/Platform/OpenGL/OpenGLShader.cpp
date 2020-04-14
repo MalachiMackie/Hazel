@@ -211,7 +211,10 @@ namespace Hazel
 		}
 
 		for (GLenum shader : glShaderIds)
+		{
 			glDetachShader(program, shader);
+			glDeleteShader(shader);
+		}
 
 		m_RendererId = program;
 	}
