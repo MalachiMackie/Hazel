@@ -1,13 +1,18 @@
 #pragma once
 
-#include "Hazel/Core.h"
 #include "Hazel/Window.h"
 
 namespace Hazel
 {
-	class HAZEL_API Input
+	class Input
 	{
+	protected:
+		Input() = default;
+
 	public:
+		Input(const Input&) = delete;
+		Input& operator=(const Input&) = delete;
+
 		inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
 
 		inline static bool IsMouseButtonPressed(int button) { return s_Instance->IsMouseButtonPressedImpl(button); }

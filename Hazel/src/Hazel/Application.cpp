@@ -1,5 +1,7 @@
 #include "hzpch.h"
 #include "Application.h"
+#include "Renderer/Renderer.h"
+#include <GLFW/glfw3.h>
 
 namespace Hazel
 {
@@ -8,37 +10,32 @@ namespace Hazel
 	Application::Application()
 	{
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!")
-		s_Instance = this;
+			s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window = Scope<Window>(Window::Create());
 		m_Window->SetEventCallback(HZ_BIND_EVENT_FN(Application::OnEvent));
 
+		Renderer::Init();
+
 		m_ImGuiLayer = new ImGuiLayer();
-
 		PushOverlay(m_ImGuiLayer);
-	}
-
-	Application::~Application()
-	{
-
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
-		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
-		overlay->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher{ e };
 		dispatcher.Dispatch<WindowCloseEvent>(HZ_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(Application::OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -50,10 +47,18 @@ namespace Hazel
 
 	void Application::Run()
 	{
+		bool goingLeft = true;
 		while (m_Running)
 		{
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+			float time = (float)glfwGetTime(); // Platform::GetTime();
+			Timestep timestep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
+
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
 
 			// ImGui Layer
 			m_ImGuiLayer->Begin();
@@ -69,5 +74,19 @@ namespace Hazel
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 }

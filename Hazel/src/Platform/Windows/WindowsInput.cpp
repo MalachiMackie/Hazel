@@ -29,6 +29,6 @@ namespace Hazel
 	{
 		double mouseX, mouseY;
 		glfwGetCursorPos(GetWindow(), &mouseX, &mouseY);
-		return std::pair<float, float>{ mouseX, mouseY };
+		return std::pair<float, float>{ (float)mouseX, (float)mouseY };
 	}
 }
