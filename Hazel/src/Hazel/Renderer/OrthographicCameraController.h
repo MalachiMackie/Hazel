@@ -34,7 +34,7 @@ namespace Hazel
 
 		bool m_CanRotate;
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
-		float m_Rotation;
+		float m_Rotation = 0.0f;
 		float m_MoveSpeed = 2.0f;
 		float m_RotateSpeed = 90.0f;
 	};

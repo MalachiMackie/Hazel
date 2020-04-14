@@ -16,7 +16,7 @@ namespace Hazel
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
-	enum EventCategory
+	enum class EventCategory
 	{
 		None = 0,
 		EventCategoryApplication =	BIT(0),
@@ -30,7 +30,7 @@ namespace Hazel
 								virtual EventType GetEventType() const override { return GetStaticType(); }\
 								virtual const char* GetName() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return (int)category; }
 
 	class Event
 	{
@@ -45,7 +45,7 @@ namespace Hazel
 
 		inline bool IsInCategory(EventCategory category)
 		{
-			return GetCategoryFlags() & category;
+			return (int)GetCategoryFlags() & (int)category;
 		}
 	};
 

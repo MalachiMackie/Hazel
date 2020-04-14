@@ -22,7 +22,7 @@ namespace Hazel
 		}
 
 		EVENT_CLASS_TYPE(WindowResize)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
 
 	private:
 		unsigned int m_Width, m_Height;
@@ -34,7 +34,7 @@ namespace Hazel
 		WindowCloseEvent() {}
 
 		EVENT_CLASS_TYPE(WindowClose)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
 	};
 
 	class AppTickEvent : public Event
@@ -43,7 +43,7 @@ namespace Hazel
 		AppTickEvent() {}
 
 		EVENT_CLASS_TYPE(AppTick)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
 	};
 
 	class AppUpdateEvent : public Event
@@ -52,7 +52,7 @@ namespace Hazel
 		AppUpdateEvent() {}
 
 		EVENT_CLASS_TYPE(AppUpdate)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
 	};
 
 	class AppRenderEvent : public Event
@@ -61,7 +61,7 @@ namespace Hazel
 		AppRenderEvent() {}
 
 		EVENT_CLASS_TYPE(AppRender)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+		EVENT_CLASS_CATEGORY(EventCategory::EventCategoryApplication)
 	};
 
 

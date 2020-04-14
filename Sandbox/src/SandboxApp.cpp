@@ -1,10 +1,11 @@
 #include <Hazel.h>
-
-#include "Platform/OpenGL/OpenGLShader.h"
+#include <Hazel/Core/EntryPoint.h>
 
 #include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Sandbox2D.h"
 
 
 class ExampleLayer : public Hazel::Layer
@@ -104,8 +105,8 @@ public:
 		m_CheckerboardTexture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_ChernoLogoTexture = Hazel::Texture2D::Create("assets/textures/ChernoLogo.png");
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->Bind();
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
+		textureShader->Bind();
+		textureShader->SetInt("u_Texture", 0);
 	}
 
 	void SquareMovement(Hazel::Timestep ts)
@@ -124,9 +125,9 @@ public:
 
 	void OnUpdate(Hazel::Timestep ts) override
 	{
-		m_CameraController.OnUpdate(ts);
-
-		if (!Hazel::Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT))
+		if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT))
+			m_CameraController.OnUpdate(ts);
+		else
 			SquareMovement(ts);
 
 		Hazel::RenderCommand::SetClearColor(glm::vec4{ 0.1, 0.1, 0.1, 1 });
@@ -140,8 +141,8 @@ public:
 
 		auto flatColorShader = m_ShaderLibrary.Get("FlatColor");
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(flatColorShader)->Bind();
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(flatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+		flatColorShader->Bind();
+		flatColorShader->SetFloat4("u_Color", m_SquareColor);
 
 		for (int x = 0; x < 20; x++)
 		{
@@ -176,7 +177,7 @@ public:
 	{
 		ImGui::Begin("Settings");
 
-		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
 		ImGui::End();
 	}
@@ -195,7 +196,7 @@ private:
 	float m_SquareMoveSpeed = 2.0f;
 	float m_SquareRotateSpeed = 90.0f;
 
-	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };
 
 class Sandbox : public Hazel::Application
@@ -203,7 +204,8 @@ class Sandbox : public Hazel::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()

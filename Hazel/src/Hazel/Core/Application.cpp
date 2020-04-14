@@ -47,7 +47,6 @@ namespace Hazel
 
 	void Application::Run()
 	{
-		bool goingLeft = true;
 		while (m_Running)
 		{
 			float time = (float)glfwGetTime(); // Platform::GetTime();

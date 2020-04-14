@@ -115,8 +115,7 @@ project "Sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/assets/shaders/**.glsl"
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
