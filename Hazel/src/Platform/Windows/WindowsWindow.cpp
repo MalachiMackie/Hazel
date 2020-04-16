@@ -4,6 +4,7 @@
 #include "Hazel/Events/ApplicationEvent.h"
 #include "Hazel/Events/MouseEvent.h"
 #include "Hazel/Events/KeyEvent.h"
+#include "Hazel/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Hazel
@@ -15,46 +16,56 @@ namespace Hazel
 		HZ_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Scope<Window> Window::Create(const WindowProps& props)
-	{
-		return std::make_unique<WindowsWindow>(props);
-	}
-
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
+		m_Data.VSync = props.VSync;
 
 		HZ_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		if (!s_GLFWWindowCount == 0)
+		if (s_GLFWWindowCount == 0)
 		{
-			HZ_CORE_INFO("Initializing GLFW");
+			HZ_PROFILE_SCOPE("glfwInit");
+
+		#if defined(HZ_DEBUG)
+			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		#endif
+
 			int success = glfwInit();
 			HZ_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		{
+			HZ_PROFILE_SCOPE("glfwCreateWindow");
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		}
 		++s_GLFWWindowCount;
 
-		m_Context = CreateScope<OpenGLContext>(m_Window);
-
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+		SetVSync(m_Data.VSync);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -81,22 +92,21 @@ namespace Hazel
 
 			Event* event{ nullptr };
 
-			//TODO: convert key to HAZEL keycode
 			switch (action)
 			{
 				case GLFW_PRESS:
 				{
-					event = (Event*)&KeyPressedEvent{ key, 0 };
+					event = (Event*)&KeyPressedEvent{ static_cast<KeyCode>(key), 0 };
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					event = (Event*)&KeyReleasedEvent{ key };
+					event = (Event*)&KeyReleasedEvent{ static_cast<KeyCode>(key) };
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					event = (Event*)&KeyPressedEvent {key, 1};
+					event = (Event*)&KeyPressedEvent{ static_cast<KeyCode>(key), 1};
 					break;
 				}
 			}
@@ -111,7 +121,7 @@ namespace Hazel
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int c)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-			KeyTypedEvent event{ c };
+			KeyTypedEvent event{ static_cast<KeyCode>(c) };
 			data.EventCallback(event);
 		});
 
@@ -126,12 +136,12 @@ namespace Hazel
 			{
 				case GLFW_PRESS:
 				{
-					event = (Event*)&MouseButtonPressedEvent(button);
+					event = (Event*)&MouseButtonPressedEvent(static_cast<MouseCode>(button));
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					event = (Event*)&MouseButtonReleasedEvent(button);
+					event = (Event*)&MouseButtonReleasedEvent(static_cast<MouseCode>(button));
 					break;
 				}
 			}
@@ -160,24 +170,32 @@ namespace Hazel
 
 	void WindowsWindow::Shutdown()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window);
 
-		s_GLFWWindowCount -= 1;
+		--s_GLFWWindowCount;
 		if (s_GLFWWindowCount == 0)
 		{
-			HZ_CORE_INFO("Terminating GLFW");
 			glfwTerminate();
 		}
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
-		glfwPollEvents();
+		HZ_PROFILE_FUNCTION();
+
+		{
+			HZ_PROFILE_SCOPE("glfwPollEvents");
+			glfwPollEvents();
+		}
 		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		if (enabled)
 			glfwSwapInterval(1);
 		else

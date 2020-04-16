@@ -18,9 +18,10 @@ public:
 private:
 	Hazel::OrthographicCameraController m_CameraController;
 
-	//Temporary
-	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
-	Hazel::Ref<Hazel::Shader> m_FlatColorShader;
+	Hazel::Ref<Hazel::Texture2D> m_CheckerboardTexture;
+	Hazel::Ref<Hazel::Texture2D> m_ChernoLogoTexture;
 
-	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+	glm::vec4 m_BackgroundTint = glm::vec4(1.0f);
+	glm::vec4 m_SquareColor = glm::vec4(0.55f, 0.2f, 0.8f, 1.0f);
+	float m_SquareRotation = 45.0f;
 };

@@ -9,38 +9,44 @@ namespace Hazel
 	{
 		switch (type)
 		{
-			case Hazel::ShaderDataType::None: return GL_NONE;
+			case ShaderDataType::None: return GL_NONE;
 
-			case Hazel::ShaderDataType::Float:
-			case Hazel::ShaderDataType::Float2:
-			case Hazel::ShaderDataType::Float3:
-			case Hazel::ShaderDataType::Float4: return GL_FLOAT;
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4: return GL_FLOAT;
 
-			case Hazel::ShaderDataType::Mat3:
-			case Hazel::ShaderDataType::Mat4: return GL_FLOAT;
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4: return GL_FLOAT;
 
-			case Hazel::ShaderDataType::Int:
-			case Hazel::ShaderDataType::Int2:
-			case Hazel::ShaderDataType::Int3:
-			case Hazel::ShaderDataType::Int4: return GL_INT;
+			case ShaderDataType::Int:
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4: return GL_INT;
 
-			case Hazel::ShaderDataType::Bool: return GL_BOOL;
+			case ShaderDataType::Bool: return GL_BOOL;
 			default: HZ_CORE_ASSERT(false, "Unknown Shader Data Type"); return GL_NONE;
 		}
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glCreateVertexArrays(1, &m_RendererId);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glDeleteVertexArrays(1, &m_RendererId);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		HZ_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout");
 
 		glBindVertexArray(m_RendererId);
@@ -64,6 +70,8 @@ namespace Hazel
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererId);
 		indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;
@@ -71,11 +79,15 @@ namespace Hazel
 
 	void OpenGLVertexArray::Bind() const
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererId);
 	}
 
 	void OpenGLVertexArray::Unbind() const
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glBindVertexArray(0);
 	}
 }

@@ -36,7 +36,7 @@ namespace Hazel
 		{
 			std::string Title;
 			unsigned int Width, Height;
-			bool VSync;
+			bool VSync = false;
 
 			EventCallbackFn EventCallback;
 		};
@@ -44,4 +44,3 @@ namespace Hazel
 		WindowData m_Data;
 	};
 }
-

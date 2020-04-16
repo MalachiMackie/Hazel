@@ -1,7 +1,8 @@
 #pragma once
 
-#include "hzpch.h"
 #include "Hazel/Renderer/Buffer.h"
+
+#include <vector>
 
 namespace Hazel
 {

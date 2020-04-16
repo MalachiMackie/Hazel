@@ -1,7 +1,7 @@
 #include "hzpch.h"
 #include "Shader.h"
 
-#include "Renderer.h"
+#include "Hazel/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include <algorithm>
@@ -15,7 +15,7 @@ namespace Hazel
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None:	HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:	return std::make_shared<OpenGLShader>(filePath);
+			case RendererAPI::API::OpenGL:	return CreateRef<OpenGLShader>(filePath);
 			default:						HZ_CORE_ASSERT(false, "Unknown Renderer Api"); return nullptr;
 		}
 	}
@@ -25,12 +25,15 @@ namespace Hazel
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None:	HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:	return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			case RendererAPI::API::OpenGL:	return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 			default:						HZ_CORE_ASSERT(false, "Unknown Renderer Api"); return nullptr;
 		}
 	}
 
-	//Shader Library
+	//////////////////////////////////////////////////
+	// Shader Library ////////////////////////////////
+	//////////////////////////////////////////////////
+
 	void ShaderLibrary::Add(const std::string name, const Ref<Shader>& shader)
 	{
 		HZ_CORE_ASSERT(!Exists(name), "Shader already exists");

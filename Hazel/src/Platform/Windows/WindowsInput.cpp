@@ -13,16 +13,14 @@ static inline GLFWwindow* GetWindow()
 
 namespace Hazel
 {
-	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
-
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool WindowsInput::IsKeyPressedImpl(KeyCode keycode)
 	{
-		return glfwGetKey(GetWindow(), keycode) == GLFW_PRESS;
+		return glfwGetKey(GetWindow(), static_cast<int32_t>(keycode)) == GLFW_PRESS;
 	}
 
-	bool WindowsInput::IsMouseButtonPressedImpl(int button)
+	bool WindowsInput::IsMouseButtonPressedImpl(MouseCode button)
 	{
-		return glfwGetMouseButton(GetWindow(), button) == GLFW_PRESS;
+		return glfwGetMouseButton(GetWindow(), static_cast<int32_t>(button)) == GLFW_PRESS;
 	}
 
 	std::pair<float, float> WindowsInput::GetMousePosImpl()

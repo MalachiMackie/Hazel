@@ -1,10 +1,10 @@
 #include "hzpch.h"
 #include "OpenGLShader.h"
+
 #include "Hazel/Core/Core.h"
 
 #include <fstream>
 #include <glad/glad.h>
-
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Hazel
@@ -22,6 +22,8 @@ namespace Hazel
 
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		std::string source = ReadFile(filePath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
@@ -37,6 +39,8 @@ namespace Hazel
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 		: m_Name(name)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		Compile(
 			{
 				{GL_VERTEX_SHADER, vertexSrc},
@@ -46,15 +50,25 @@ namespace Hazel
 
 	std::string OpenGLShader::ReadFile(const std::string& filePath)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		std::string result;
 		std::ifstream in(filePath, std::ios::in | std::ios::binary);
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
-			result.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&result[0], result.size());
-			in.close();
+			size_t size = in.tellg();
+			if (size != -1)
+			{
+				result.resize(size);
+				in.seekg(0, std::ios::beg);
+				in.read(&result[0], size);
+				in.close();
+			}
+			else
+			{
+				HZ_CORE_ERROR("Could not open file '{0}'", filePath);
+			}
 		}
 		else
 		{
@@ -65,6 +79,8 @@ namespace Hazel
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -83,7 +99,7 @@ namespace Hazel
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); // Start of shader code after shader type declaration line
 			HZ_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
 			pos = source.find(typeToken, nextLinePos); // Start of next shader type declaration line
-			
+
 			shaderSources[ShaderTypeFromString(type)] = (pos == std::string::npos)
 				? source.substr(nextLinePos)
 				: source.substr(nextLinePos, pos - nextLinePos);
@@ -94,36 +110,64 @@ namespace Hazel
 
 	OpenGLShader::~OpenGLShader()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_RendererId);
 	}
 
 	void OpenGLShader::Bind() const
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glUseProgram(m_RendererId);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
+		HZ_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		UploadUniformInt(name, value);
+	}
+
+	void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		HZ_PROFILE_FUNCTION();
+
+		UploadUniformIntArray(name, values, count);
+	}
+
+	void OpenGLShader::SetFloat(const std::string& name, float value)
+	{
+		HZ_PROFILE_FUNCTION();
+		
+		UploadUniformFloat(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		UploadUniformFloat4(name, value);
 	}
-	
+
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		UploadUniformMat4(name, value);
 	}
 
@@ -131,6 +175,12 @@ namespace Hazel
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
 		glUniform1i(location, value);
+	}
+
+	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+		glUniform1iv(location, count, values);
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string& name, float value)
@@ -171,46 +221,58 @@ namespace Hazel
 
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
-		GLuint program = glCreateProgram();
-
-		HZ_CORE_ASSERT(shaderSources.size() <= 3, "Maximum of 3 shaders are supported.");
-		std::array<GLenum, 3> glShaderIds;
-
-		int index{ 0 };
-		for (auto& kv : shaderSources)
+		HZ_PROFILE_FUNCTION();
+		GLuint program = GL_NONE;
 		{
-			GLenum type = kv.first;
-			const std::string& source = kv.second;
+			HZ_PROFILE_SCOPE("glCreateProgram");
+			program = glCreateProgram();
 
-			GLuint shader = glCreateShader(type);
+			HZ_CORE_ASSERT(shaderSources.size() <= 3, "Maximum of 3 shaders are supported.");
 
-			const GLchar* sourceCStr = kv.second.c_str();
-			glShaderSource(shader, 1, &sourceCStr, 0);
-
-			glCompileShader(shader);
-
-			GLint isCompiled = 0;
-			glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-			if (isCompiled == GL_FALSE)
-			{
-				GLint maxLength = 0;
-				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-
-				std::vector<GLchar> infoLog(maxLength);
-				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
-
-				glDeleteShader(shader);
-
-				HZ_CORE_ERROR("{0}", infoLog.data());
-				HZ_CORE_ASSERT(false, "Shader compilation failure");
-				return;
-			}
-
-			glAttachShader(program, shader);
-			glShaderIds[index++] = shader;
 		}
 
-		glLinkProgram(program);
+		std::array<GLenum, 3> glShaderIds;
+		int index{ 0 };
+		{
+			HZ_PROFILE_SCOPE("Compile Shader Sources");
+			for (auto& kv : shaderSources)
+			{
+				GLenum type = kv.first;
+				const std::string& source = kv.second;
+
+				GLuint shader = glCreateShader(type);
+
+				const GLchar* sourceCStr = kv.second.c_str();
+				glShaderSource(shader, 1, &sourceCStr, 0);
+
+				glCompileShader(shader);
+
+				GLint isCompiled = 0;
+				glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+				if (isCompiled == GL_FALSE)
+				{
+					GLint maxLength = 0;
+					glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+					std::vector<GLchar> infoLog(maxLength);
+					glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+
+					glDeleteShader(shader);
+
+					HZ_CORE_ERROR("{0}", infoLog.data());
+					HZ_CORE_ASSERT(false, "Shader compilation failure");
+					return;
+				}
+
+				glAttachShader(program, shader);
+				glShaderIds[index++] = shader;
+			}
+		}
+
+		{
+			HZ_PROFILE_SCOPE("Link Program");
+			glLinkProgram(program);
+		}
 
 		GLint isLinked = 0;
 		glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
