@@ -39,5 +39,16 @@ uniform sampler2D u_Textures[32];
 
 void main()
 {
-	color = texture(u_Textures[int(v_TextureIndex)], v_TextureCoords * v_TilingFactor) * v_Color;
+	if (v_TextureIndex == 0.0)
+	{
+		color = texture(u_Textures[int(v_TextureIndex)], v_TextureCoords * v_TilingFactor) * v_Color;
+	}
+	else if (v_TextureIndex == 1.0)
+	{
+		color = texture(u_Textures[int(v_TextureIndex)], v_TextureCoords * v_TilingFactor) * v_Color;
+	}
+	else
+	{
+		color = texture(u_Textures[int(v_TextureIndex)], v_TextureCoords * v_TilingFactor) * v_Color;
+	}
 }

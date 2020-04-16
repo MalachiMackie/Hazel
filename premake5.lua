@@ -148,3 +148,7 @@ project "Sandbox"
 		defines "HZ_DIST"
 		runtime "Release"
 		optimize "on"
+		
+	filter { "system:windows", "configurations:Dist or Release"}
+		kind "WindowedApp"
+		linkoptions {"/SUBSYSTEM:windows /ENTRY:mainCRTStartup"}
