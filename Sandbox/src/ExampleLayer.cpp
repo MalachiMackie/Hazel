@@ -8,7 +8,7 @@ ExampleLayer::ExampleLayer()
 	: Layer("Example"),
 	m_CameraController(1280.0f / 720.0f), m_SquarePos(0.0f)
 {
-	m_TriVA = Hazel::VertexArray::Create();
+	m_TriVA = Cheezy::VertexArray::Create();
 
 	float vertices[3 * 7]
 	{
@@ -17,21 +17,21 @@ ExampleLayer::ExampleLayer()
 		 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 	};
 
-	auto triVB = Hazel::Ref<Hazel::VertexBuffer>(Hazel::VertexBuffer::Create(sizeof(vertices), vertices));
+	auto triVB = Cheezy::Ref<Cheezy::VertexBuffer>(Cheezy::VertexBuffer::Create(sizeof(vertices), vertices));
 
-	Hazel::BufferLayout layout = {
-		{ Hazel::ShaderDataType::Float3, "a_Position" },
-		{ Hazel::ShaderDataType::Float4, "a_Color" }
+	Cheezy::BufferLayout layout = {
+		{ Cheezy::ShaderDataType::Float3, "a_Position" },
+		{ Cheezy::ShaderDataType::Float4, "a_Color" }
 	};
 
 	triVB->SetLayout(layout);
 	m_TriVA->AddVertexBuffer(triVB);
 
 	uint32_t indices[3] = { 0, 1, 2 };
-	auto triIB = Hazel::Ref<Hazel::IndexBuffer>(Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+	auto triIB = Cheezy::Ref<Cheezy::IndexBuffer>(Cheezy::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 	m_TriVA->SetIndexBuffer(triIB);
 
-	m_SquareVA = Hazel::VertexArray::Create();
+	m_SquareVA = Cheezy::VertexArray::Create();
 
 	float squareVerts[4 * 5]
 	{
@@ -41,18 +41,18 @@ ExampleLayer::ExampleLayer()
 		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
 	};
 
-	auto squareVB = Hazel::Ref<Hazel::VertexBuffer>(Hazel::VertexBuffer::Create(sizeof(squareVerts), squareVerts));
+	auto squareVB = Cheezy::Ref<Cheezy::VertexBuffer>(Cheezy::VertexBuffer::Create(sizeof(squareVerts), squareVerts));
 
-	Hazel::BufferLayout squareLayout = {
-		{ Hazel::ShaderDataType::Float3, "a_Position" },
-		{ Hazel::ShaderDataType::Float2, "a_TexCoord" },
+	Cheezy::BufferLayout squareLayout = {
+		{ Cheezy::ShaderDataType::Float3, "a_Position" },
+		{ Cheezy::ShaderDataType::Float2, "a_TexCoord" },
 	};
 
 	squareVB->SetLayout(squareLayout);
 	m_SquareVA->AddVertexBuffer(squareVB);
 
 	uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-	auto squareIB = Hazel::Ref<Hazel::IndexBuffer>(Hazel::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+	auto squareIB = Cheezy::Ref<Cheezy::IndexBuffer>(Cheezy::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 	m_SquareVA->SetIndexBuffer(squareIB);
 
 	std::string vertexSrc = R"(
@@ -94,42 +94,42 @@ ExampleLayer::ExampleLayer()
 	auto flatColorShader = m_ShaderLibrary.Load("assets/shaders/FlatColor.glsl");
 	auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
-	m_CheckerboardTexture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
-	m_ChernoLogoTexture = Hazel::Texture2D::Create("assets/textures/ChernoLogo.png");
+	m_CheckerboardTexture = Cheezy::Texture2D::Create("assets/textures/Checkerboard.png");
+	m_ChernoLogoTexture = Cheezy::Texture2D::Create("assets/textures/ChernoLogo.png");
 
 	textureShader->Bind();
 	textureShader->SetInt("u_Texture", 0);
 }
 
-void ExampleLayer::SquareMovement(Hazel::Timestep ts)
+void ExampleLayer::SquareMovement(Cheezy::Timestep ts)
 {
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
+	if (Cheezy::Input::IsKeyPressed(CZ_KEY_A))
 		m_SquarePos.x -= m_SquareMoveSpeed * ts;
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
+	if (Cheezy::Input::IsKeyPressed(CZ_KEY_D))
 		m_SquarePos.x += m_SquareMoveSpeed * ts;
 
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_W))
+	if (Cheezy::Input::IsKeyPressed(CZ_KEY_W))
 		m_SquarePos.y += m_SquareMoveSpeed * ts;
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_S))
+	if (Cheezy::Input::IsKeyPressed(CZ_KEY_S))
 		m_SquarePos.y -= m_SquareMoveSpeed * ts;
 }
 
 
-void ExampleLayer::OnUpdate(Hazel::Timestep ts)
+void ExampleLayer::OnUpdate(Cheezy::Timestep ts)
 {
-	if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT))
+	if (Cheezy::Input::IsKeyPressed(CZ_KEY_LEFT_SHIFT))
 		m_CameraController.OnUpdate(ts);
 	else
 		SquareMovement(ts);
 
-	Hazel::RenderCommand::SetClearColor(glm::vec4{ 0.1, 0.1, 0.1, 1 });
-	Hazel::RenderCommand::Clear();
+	Cheezy::RenderCommand::SetClearColor(glm::vec4{ 0.1, 0.1, 0.1, 1 });
+	Cheezy::RenderCommand::Clear();
 
-	Hazel::Renderer::BeginScene(m_CameraController.GetCamera());
+	Cheezy::Renderer::BeginScene(m_CameraController.GetCamera());
 
 	static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-	Hazel::Renderer::Submit(m_ShaderLibrary.Get("VertexPosColor"), m_TriVA);
+	Cheezy::Renderer::Submit(m_ShaderLibrary.Get("VertexPosColor"), m_TriVA);
 
 	auto flatColorShader = m_ShaderLibrary.Get("FlatColor");
 
@@ -142,25 +142,25 @@ void ExampleLayer::OnUpdate(Hazel::Timestep ts)
 		{
 			glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePos + pos) * scale;
-			Hazel::Renderer::Submit(flatColorShader, m_SquareVA, transform);
+			Cheezy::Renderer::Submit(flatColorShader, m_SquareVA, transform);
 		}
 	}
 
 	auto textureShader = m_ShaderLibrary.Get("Texture");
 
 	m_CheckerboardTexture->Bind();
-	Hazel::Renderer::Submit(
+	Cheezy::Renderer::Submit(
 		textureShader,
 		m_SquareVA,
 		glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)));
 	m_ChernoLogoTexture->Bind();
-	Hazel::Renderer::Submit(textureShader, m_SquareVA,
+	Cheezy::Renderer::Submit(textureShader, m_SquareVA,
 		glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)));
 
-	Hazel::Renderer::EndScene();
+	Cheezy::Renderer::EndScene();
 }
 
-void ExampleLayer::OnEvent(Hazel::Event& e)
+void ExampleLayer::OnEvent(Cheezy::Event& e)
 {
 	m_CameraController.OnEvent(e);
 }

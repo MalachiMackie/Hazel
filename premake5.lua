@@ -1,4 +1,4 @@
-workspace "Hazel"
+workspace "Cheezy"
 	architecture "x86_64"
 	startproject "Sandbox"
 
@@ -17,22 +17,24 @@ workspace "Hazel"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
-IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
-IncludeDir["ImGui"] = "Hazel/vendor/imgui"
-IncludeDir["glm"] = "Hazel/vendor/glm"
-IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
+IncludeDir["GLFW"]		= "Cheezy/vendor/GLFW/include"
+IncludeDir["Glad"]		= "Cheezy/vendor/Glad/include"
+IncludeDir["lua"]		= "Cheezy/vendor/lua/include"
+IncludeDir["LuaBridge"]	= "Cheezy/vendor/LuaBridge"
+IncludeDir["ImGui"]		= "Cheezy/vendor/imgui"
+IncludeDir["glm"]		= "Cheezy/vendor/glm"
+IncludeDir["stb_image"] = "Cheezy/vendor/stb_image"
 
 
 group "Dependencies"
-	include "Hazel/vendor/GLFW"
-	include "Hazel/vendor/Glad"
-	include "Hazel/vendor/imgui"
+	include "Cheezy/vendor/GLFW"
+	include "Cheezy/vendor/Glad"
+	include "Cheezy/vendor/imgui"
 
 group ""
 
-project "Hazel"
-	location "Hazel"
+project "Cheezy"
+	location "Cheezy"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
@@ -42,7 +44,7 @@ project "Hazel"
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 	
 	pchheader "hzpch.h"
-	pchsource "Hazel/src/hzpch.cpp"
+	pchsource "Cheezy/src/hzpch.cpp"
 
 	files
 	{
@@ -52,6 +54,9 @@ project "Hazel"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/lua/**.h",
+		"%{prj.name}/vendor/lua/**.hpp",
+		"%{prj.name}/vendor/LuaBridge/**.h"
 	}
 
 	defines
@@ -65,9 +70,16 @@ project "Hazel"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
+		"%{IncludeDir.LuaBridge}",
+		"%{IncludeDir.lua}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.stb_image}"
+	}
+
+	libdirs
+	{
+		"%{prj.name}/vendor/lua"
 	}
 
 	links
@@ -75,7 +87,8 @@ project "Hazel"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib"
+		"opengl32.lib",
+		"lua53"
 	}
 
 	filter "system:windows"
@@ -83,22 +96,22 @@ project "Hazel"
 
 		defines
 		{
-			"HZ_BUILD_DLL",
+			"CZ_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
 
 	filter "configurations:Debug"
-		defines "HZ_DEBUG"
+		defines "CZ_DEBUG"
 		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
-		defines "HZ_RELEASE"
+		defines "CZ_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
-		defines "HZ_DIST"
+		defines "CZ_DIST"
 		runtime "Release"
 		optimize "on"
 
@@ -115,37 +128,40 @@ project "Sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/**.lua"
 	}
 
 	includedirs
 	{
-		"Hazel/vendor/spdlog/include",
-		"Hazel/src",
-		"Hazel/vendor",
-		"%{IncludeDir.glm}"
+		"Cheezy/vendor/spdlog/include",
+		"Cheezy/vendor/lua/include",
+		"Cheezy/src",
+		"Cheezy/vendor",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.LuaBridge}"
 	}
 
 	links
 	{
-		"Hazel"
+		"Cheezy"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
 
 	filter "configurations:Debug"
-		defines "HZ_DEBUG"
+		defines "CZ_DEBUG"
 		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
-		defines "HZ_RELEASE"
+		defines "CZ_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
-		defines "HZ_DIST"
+		defines "CZ_DIST"
 		runtime "Release"
 		optimize "on"
 		

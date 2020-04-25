@@ -1,28 +1,28 @@
 #pragma once
 
-#include "Hazel.h"
+#include "Cheezy.h"
 
-class ExampleLayer : public Hazel::Layer
+class ExampleLayer : public Cheezy::Layer
 {
 public:
 	ExampleLayer();
 
-	void OnUpdate(Hazel::Timestep ts) override;
-	void OnEvent(Hazel::Event& e) override;
+	void OnUpdate(Cheezy::Timestep ts) override;
+	void OnEvent(Cheezy::Event& e) override;
 	void OnImGuiRender() override;
 
 private:
-	void SquareMovement(Hazel::Timestep ts);
+	void SquareMovement(Cheezy::Timestep ts);
 
 private:
-	Hazel::ShaderLibrary m_ShaderLibrary;
+	Cheezy::ShaderLibrary m_ShaderLibrary;
 
-	Hazel::Ref<Hazel::VertexArray> m_TriVA;
-	Hazel::Ref<Hazel::VertexArray> m_SquareVA;
+	Cheezy::Ref<Cheezy::VertexArray> m_TriVA;
+	Cheezy::Ref<Cheezy::VertexArray> m_SquareVA;
 
-	Hazel::Ref<Hazel::Texture2D> m_CheckerboardTexture, m_ChernoLogoTexture;
+	Cheezy::Ref<Cheezy::Texture2D> m_CheckerboardTexture, m_ChernoLogoTexture;
 
-	Hazel::OrthographicCameraController m_CameraController;
+	Cheezy::OrthographicCameraController m_CameraController;
 
 	glm::vec3 m_SquarePos;
 	float m_SquareMoveSpeed = 2.0f;

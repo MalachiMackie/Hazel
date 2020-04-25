@@ -1,19 +1,19 @@
 #include "Sandbox2D.h"
 #include "ExampleLayer.h"
 
-#include <Hazel.h>
-#include <Hazel/Core/EntryPoint.h>
+#include <Cheezy.h>
+#include <Cheezy/Core/EntryPoint.h>
 #include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Sandbox : public Hazel::Application
+class Sandbox : public Cheezy::Application
 {
 public:
 	Sandbox()
 	{
 		//PushLayer(new ExampleLayer());
-		PushLayer(new Sandbox2D());
+		PushLayer(Cheezy::CreateRef<Sandbox2D>());
 	}
 
 	~Sandbox()
@@ -22,7 +22,7 @@ public:
 	}
 };
 
-Hazel::Application* Hazel::CreateApplication()
+Cheezy::Application* Cheezy::CreateApplication()
 {
 	return new Sandbox();
 }
