@@ -13,6 +13,11 @@ namespace Cheezy
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
+		/*
+			Runs 50 times per second.
+			Will run multiple times per rendered frame if it has to
+		*/
+		virtual void OnFixedUpdate() {}
 		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}

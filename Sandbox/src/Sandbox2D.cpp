@@ -17,24 +17,32 @@ void Sandbox2D::OnAttach()
 	m_ChernoLogoTexture = Cheezy::Texture2D::Create("assets/textures/ChernoLogo.png");
 
 	auto mObject = Cheezy::CreateRef<Cheezy::CheezyObject>();
-	mObject->AddComponent(Cheezy::CreateRef<Cheezy::Transform2DComponent>(glm::vec3(1.0f, 1.0f, 1.0f)));
+	mObject->AddComponent(Cheezy::CreateRef<Cheezy::Transform2DComponent>(glm::vec3(2.0f, 0.0f, 0.0f)));
 	mObject->AddComponent(Cheezy::CreateRef<Cheezy::ScriptComponent>("src/scripts/test.lua"));
-	mObject->AddComponent(Cheezy::CreateRef<Cheezy::BoxCollider2DComponent>(glm::vec2(1.0f, 1.0f)));
-	mObject->SetShape(new Cheezy::Quad(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), m_CheckerboardTexture, {0.6f, 0.1f, 0.8f, 1.0f}));
+	mObject->AddComponent(Cheezy::CreateRef<Cheezy::BoxCollider2DComponent>(glm::vec2(1.0f, 1.0f), true));
+	mObject->AddComponent(Cheezy::CreateRef<Cheezy::RigidBodyComponent>());
+	mObject->SetShape(new Cheezy::Quad(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), {0.6f, 0.1f, 0.8f, 1.0f}, m_CheckerboardTexture));
 	m_Scene.AddObject(mObject);
 
 	mObject = Cheezy::CreateRef<Cheezy::CheezyObject>();
-	mObject->AddComponent(Cheezy::CreateRef<Cheezy::Transform2DComponent>(glm::vec3(), glm::vec2(1.0f), 45.0f));
+	mObject->AddComponent(Cheezy::CreateRef<Cheezy::Transform2DComponent>(glm::vec3(), glm::vec2(1.0f), 90.0f));
 	mObject->AddComponent(Cheezy::CreateRef<Cheezy::BoxCollider2DComponent>(glm::vec2(1.0f, 1.0f)));
-	//mObject->SetShape(new Cheezy::Quad(glm::vec3(-1.0f, -1.0f, 0.0f), 45.0f, glm::vec2(1.0f), Cheezy::Renderer2D::WhiteTexture, { 0.6f, 0.1f, 0.9f, 1.0f}));
-	mObject->SetShape(new Cheezy::Quad(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), Cheezy::Renderer2D::WhiteTexture, { 0.6f, 0.1f, 0.9f, 1.0f}));
+	mObject->SetShape(new Cheezy::Quad(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), { 0.6f, 0.1f, 0.9f, 1.0f}));
 	m_Scene.AddObject(mObject);
+	
 }
 
 void Sandbox2D::OnDetach()
 {
 	CZ_PROFILE_FUNCTION();
 
+}
+
+void Sandbox2D::OnFixedUpdate()
+{
+	CZ_PROFILE_FUNCTION();
+
+	m_Scene.OnFixedUpdate();
 }
 
 void Sandbox2D::OnUpdate(Cheezy::Timestep ts)
@@ -54,33 +62,8 @@ void Sandbox2D::OnUpdate(Cheezy::Timestep ts)
 
 	{
 		CZ_PROFILE_SCOPE("Renderer Draw");
-		//Cheezy::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		////Non-Rotated Flat Color
-		//Cheezy::Renderer2D::DrawQuad({ -1.0f, 1.0f }, { 1.0f, 1.0f }, m_SquareColor);
-
-		////Not-Rotated Texture
-		//Cheezy::Renderer2D::DrawQuad({ -1.0f, -1.0f }, { 1.0f, 1.0f }, m_CheckerboardTexture, 1.0f, m_SquareColor);
-
-		////Rotated Flat Color
-		//Cheezy::Renderer2D::DrawRotatedQuad({ 1.0f, 1.0f }, { 1.0f, 1.0f }, m_SquareRotation, m_SquareColor);
-
-		////Rotated Texture
-		//Cheezy::Renderer2D::DrawRotatedQuad({ 1.0f, -1.0f }, { 1.0f, 1.0f }, m_SquareRotation, m_ChernoLogoTexture, 1.0f, m_SquareColor);
-
-		//Cheezy::Renderer2D::EndScene();
 
 		Cheezy::Renderer2D::BeginScene(m_Scene);
-
-		/*for (float y = -5.0f; y < 5.0f; y += m_SquareStep)
-		{
-			for (float x = -5.0f; x < 5.0f; x += m_SquareStep)
-			{
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 1.0f};
-				Cheezy::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-			}
-		}*/
-
 		Cheezy::Renderer2D::EndScene();
 	}
 }

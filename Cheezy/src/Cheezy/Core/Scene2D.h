@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Cheezy/Core/CheezyObject.h"
-#include "Cheezy/Core/Components/BoxCollider2DComponent.h"
-#include "Cheezy/Core/Shapes/Shape2D.h"
 #include "Cheezy/Renderer/OrthographicCameraController.h"
 
 namespace Cheezy
@@ -15,6 +13,11 @@ namespace Cheezy
 		{
 		}
 
+		/*
+			Runs 50 times per second.
+			Will run multiple times per rendered frame if it has to
+		*/
+		void OnFixedUpdate();
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 
@@ -42,14 +45,6 @@ namespace Cheezy
 		}
 
 		void CheckCollisions() const;
-
-		bool NoRotationCollisionCheck(
-			Ref<BoxCollider2DComponent>& collider1, Ref<Transform2DComponent>& transform1,
-			Ref<BoxCollider2DComponent>& collider2, Ref<Transform2DComponent>& transform2) const;
-
-		bool RotationCollisionCheck(
-			Ref<BoxCollider2DComponent>& collider1, Ref<Transform2DComponent>& transform1,
-			Ref<BoxCollider2DComponent>& collider2, Ref<Transform2DComponent>& transform2) const;
 
 	private:
 		OrthographicCameraController m_CameraController;

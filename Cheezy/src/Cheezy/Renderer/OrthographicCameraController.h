@@ -15,6 +15,7 @@ namespace Cheezy
 	public:
 		OrthographicCameraController(float aspectRatio, bool canRotate = false);
 
+		void OnFixedUpdate();
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
 

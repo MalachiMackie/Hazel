@@ -13,36 +13,14 @@ namespace Cheezy
 	{
 	}
 
+	void OrthographicCameraController::OnFixedUpdate()
+	{
+
+	}
+
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
-		/*CZ_PROFILE_FUNCTION();
-
-		if (Input::IsKeyPressed(CZ_KEY_A))
-			m_Position.x -= m_MoveSpeed * ts;
-		if (Input::IsKeyPressed(CZ_KEY_D))
-			m_Position.x += m_MoveSpeed * ts;
-
-		if (Input::IsKeyPressed(CZ_KEY_W))
-			m_Position.y += m_MoveSpeed * ts;
-		if (Input::IsKeyPressed(CZ_KEY_S))
-			m_Position.y -= m_MoveSpeed * ts;
-
-		if (m_CanRotate)
-		{
-			if (Input::IsKeyPressed(CZ_KEY_Q))
-				m_Rotation += m_RotateSpeed * ts;
-			if (Input::IsKeyPressed(CZ_KEY_E))
-				m_Rotation -= m_RotateSpeed * ts;
-
-			if (m_Rotation > 180.0f)
-				m_Rotation -= 360.0f;
-			else if (m_Rotation <= -180.0f)
-				m_Rotation += 360.0f;
-
-			m_Camera.SetRotation(m_Rotation);
-		}
-
-		m_Camera.SetPosition(m_Position);*/
+		
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)

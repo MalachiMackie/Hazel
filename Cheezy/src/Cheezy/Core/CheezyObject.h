@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Cheezy/Core/Components/CheezyComponent.h"
-#include "Cheezy/Core/Components/Transform2DComponent.h"
 #include "Cheezy/Core/Timestep.h"
 #include "Cheezy/Core/Shapes/Shape2D.h"
+#include "Cheezy/Core/Collision2D.h"
 
 #include <vector>
 #include <memory>
@@ -12,11 +11,19 @@
 
 namespace Cheezy
 {
+	class CheezyComponent;
+	class BoxCollider2DComponent;
+
 	class CheezyObject : public std::enable_shared_from_this<CheezyObject>
 	{
 	public:
 		CheezyObject();
 
+		/*
+			Runs 50 times per second.
+			Will run multiple times per rendered frame if it has to
+		*/
+		void OnFixedUpdate();
 		void OnUpdate(Timestep ts);
 
 		template<typename T>
@@ -31,7 +38,7 @@ namespace Cheezy
 				return;
 			}
 
-			component->m_CheezyObject = Get();
+			component->SetCheezyObject(Get());
 			component->Init();
 
 			m_Components.push_back(component);
@@ -70,6 +77,10 @@ namespace Cheezy
 		}
 
 		Ref<CheezyObject> Get() { return shared_from_this(); }
+
+		void OnCollision(Collision2D collision);
+		void OnCollisionEnter(Collision2D collision);
+		void OnCollisionExit(Collision2D collision);
 
 	private:
 		std::vector<Ref<CheezyComponent>> m_Components;

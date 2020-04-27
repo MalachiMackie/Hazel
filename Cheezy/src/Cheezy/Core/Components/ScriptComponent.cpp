@@ -5,6 +5,9 @@
 #include "Cheezy/Core/KeyCodes.h"
 #include "Cheezy/Core/MouseCodes.h"
 
+#include "Cheezy/Core/Components/Transform2DComponent.h"
+#include "Cheezy/Core/Components/RigidBody2DComponent.h"
+
 #include <LuaBridge/LuaBridge.h>
 #include <functional>
 
@@ -31,6 +34,11 @@ namespace Cheezy
 		return obj->GetComponent<T>().get();
 	}
 
+	static float GetVec2Magnitude(const glm::vec2* vec)
+	{
+		return glm::length(*vec);
+	}
+
 	ScriptComponent::ScriptComponent(const char* filePath)
 		: m_LuaState(luaL_newstate()), m_FilePath(filePath)
 	{
@@ -39,6 +47,90 @@ namespace Cheezy
 	ScriptComponent::~ScriptComponent()
 	{
 		lua_close(m_LuaState);
+	}
+
+	void ScriptComponent::OnCollision(Collision2D collision)
+	{
+		if (!m_IsInitiailzed)
+		{
+			return;
+		}
+
+		static luabridge::LuaRef onCollisionDetectedFunc{ luabridge::getGlobal(m_LuaState, "OnCollision") };
+		if (onCollisionDetectedFunc.isFunction())
+		{
+			try
+			{
+				auto _ = onCollisionDetectedFunc(collision);
+			}
+			catch (luabridge::LuaException & ex)
+			{
+				CZ_ERROR("Lua Error Occurred: {0}", ex.what());
+			}
+		}
+	}
+
+	void ScriptComponent::OnCollisionEnter(Collision2D collision)
+	{
+		if (!m_IsInitiailzed)
+		{
+			return;
+		}
+
+		static luabridge::LuaRef onCollisionDetectedFunc{ luabridge::getGlobal(m_LuaState, "OnCollisionEnter") };
+		if (onCollisionDetectedFunc.isFunction())
+		{
+			try
+			{
+				auto _ = onCollisionDetectedFunc(collision);
+			}
+			catch (luabridge::LuaException & ex)
+			{
+				CZ_ERROR("Lua Error Occurred: {0}", ex.what());
+			}
+		}
+	}
+
+	void ScriptComponent::OnCollisionExit(Collision2D collision)
+	{
+		if (!m_IsInitiailzed)
+		{
+			return;
+		}
+
+		static luabridge::LuaRef onCollisionDetectedFunc{ luabridge::getGlobal(m_LuaState, "OnCollisionExit") };
+		if (onCollisionDetectedFunc.isFunction())
+		{
+			try
+			{
+				auto _ = onCollisionDetectedFunc(collision);
+			}
+			catch (luabridge::LuaException & ex)
+			{
+				CZ_ERROR("Lua Error Occurred: {0}", ex.what());
+			}
+		}
+	}
+
+	void ScriptComponent::OnFixedUpdate()
+	{
+		if (!m_IsInitiailzed)
+		{
+			return;
+		}
+
+		static luabridge::LuaRef onFixedUpdateFunc{ luabridge::getGlobal(m_LuaState, "OnFixedUpdate") };
+		if (onFixedUpdateFunc.isFunction())
+		{
+			try
+			{
+				auto _ = onFixedUpdateFunc();
+			}
+			catch (luabridge::LuaException & ex)
+			{
+				CZ_ERROR("Lua Error Occurred: {0}", ex.what());
+			}
+		}
 	}
 
 	void ScriptComponent::OnUpdate(Timestep ts)
@@ -71,10 +163,15 @@ namespace Cheezy
 			luabridge::getGlobalNamespace(m_LuaState)
 			.beginClass<CheezyObject>("CheezyObject")
 				.addFunction("GetTransform", GetCheezyObjectComponent<Transform2DComponent>)
+				.addFunction("GetRigidBody", GetCheezyObjectComponent<RigidBodyComponent>)
 			.endClass()
 			.beginClass<CheezyComponent>("CheezyComponent").endClass()
 				.deriveClass<Transform2DComponent, CheezyComponent>("Transform")
 					.addProperty("Position", &GetTransformPosition, &SetTransformPosition)
+				.endClass()
+				.deriveClass<RigidBodyComponent, CheezyComponent>("RigidBody")
+					.addFunction("GetVelocity", &RigidBodyComponent::GetVelocity)
+					.addFunction("AddForce", &RigidBodyComponent::AddForce)
 				.endClass()
 			.beginClass<glm::vec3>("Vec3")
 				.addConstructor<void(*) (float, float, float)>()
@@ -82,9 +179,17 @@ namespace Cheezy
 				.addProperty("y", &glm::vec3::y, true)
 				.addProperty("z", &glm::vec3::z, true)
 			.endClass()
+			.beginClass<glm::vec2>("Vec2")
+				.addConstructor<void(*) (float, float)>()
+				.addProperty("x", &glm::vec2::x, true)
+				.addProperty("y", &glm::vec2::y, true)
+				.addFunction("GetMagnitude", &GetVec2Magnitude)
+			.endClass()
+			.beginClass<Collision2D>("Collision2D")
+			.endClass()
 			.addFunction("IsKeyDown", IsKeyPressed);
 
-		luabridge::setGlobal(m_LuaState, GetCheezyObject(), "MyCheezyObject");
+		luabridge::setGlobal(m_LuaState, GetCheezyObject().get(), "MyCheezyObject");
 
 		InitInputCodes();
 

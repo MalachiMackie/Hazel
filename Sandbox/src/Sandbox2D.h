@@ -11,6 +11,11 @@ public:
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
 
+	/*
+		Runs 50 times per second.
+		Will run multiple times per rendered frame if it has to
+	*/
+	void OnFixedUpdate() override;
 	void OnUpdate(Cheezy::Timestep ts) override;
 	void OnEvent(Cheezy::Event& e) override;
 	void OnImGuiRender() override;

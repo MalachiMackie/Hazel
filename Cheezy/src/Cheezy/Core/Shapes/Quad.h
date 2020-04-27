@@ -13,8 +13,8 @@ namespace Cheezy
 			const glm::vec3& position = glm::vec3(0.0f),
 			float rotation = 0.0f,
 			const glm::vec2& scale = glm::vec2(1.0f),
-			Ref<Texture2D> texture = Renderer2D::WhiteTexture,
-			const glm::vec4& color = glm::vec4(1.0f));
+			const glm::vec4& color = glm::vec4(1.0f),
+			Ref<Texture2D> texture = Renderer2D::WhiteTexture);
 
 		~Quad() override = default;
 

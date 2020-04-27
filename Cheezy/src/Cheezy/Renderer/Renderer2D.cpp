@@ -5,6 +5,8 @@
 #include "Cheezy/Renderer/Shader.h"
 #include "Cheezy/Renderer/RenderCommand.h"
 
+#include "Cheezy/Core/Components/Transform2DComponent.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Cheezy
@@ -20,7 +22,7 @@ namespace Cheezy
 
 	struct Renderer2DData
 	{
-		static const uint32_t MaxQuads = 1;
+		static const uint32_t MaxQuads = 10000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32;
@@ -133,7 +135,7 @@ namespace Cheezy
 
 		s_Data.TextureSlotIndex = 1;
 
-		for (const Ref<CheezyObject> object : scene.GetObjects())
+		for (const Ref<CheezyObject>& object : scene.GetObjects())
 		{
 			Ref<Shape2D> shape = object->GetShape();
 			if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -147,7 +149,7 @@ namespace Cheezy
 			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(shape->GetRotation() + objectTransform->GetRotation()), { 0.0f, 0.0f, 1.0f });
 			transform *= glm::scale(glm::mat4(1.0f), { shapeScale.x * objectTransform->GetSize().x, shapeScale.y * objectTransform->GetSize().y, 1.0f });
 
-			float textureIndex = 0.0f;
+			float textureIndex = -1.0f;
 
 			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			{
@@ -158,7 +160,7 @@ namespace Cheezy
 				}
 			}
 
-			if (textureIndex == 0.0f)
+			if (textureIndex == -1.0f)
 			{
 				textureIndex = (float)s_Data.TextureSlotIndex;
 				s_Data.TextureSlots[s_Data.TextureSlotIndex++] = shape->GetTexture();
