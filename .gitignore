@@ -12,3 +12,8 @@ bin-int/
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+Sandbox/CheezyProfile-Runtime.json
+
+Sandbox/CheezyProfile-Shutdown.json
+
+Sandbox/CheezyProfile-Startup.json
