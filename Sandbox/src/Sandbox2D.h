@@ -21,7 +21,7 @@ public:
 	void OnImGuiRender() override;
 
 private:
-	Cheezy::Scene2D m_Scene;
+	Cheezy::Ref<Cheezy::Scene2D> m_Scene;
 
 	Cheezy::Ref<Cheezy::Texture2D> m_CheckerboardTexture;
 	Cheezy::Ref<Cheezy::Texture2D> m_ChernoLogoTexture;

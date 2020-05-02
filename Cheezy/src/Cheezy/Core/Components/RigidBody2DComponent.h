@@ -31,6 +31,7 @@ namespace Cheezy
 		float m_Drag = 0.95f;
 
 		Ref<Transform2DComponent> m_Transform;
+		bool m_UseGravity = true;
 
 		std::vector<Ref<BoxCollider2DComponent>> m_CurrentCollisions;
 	};

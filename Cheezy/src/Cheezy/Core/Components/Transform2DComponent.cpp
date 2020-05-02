@@ -3,8 +3,8 @@
 
 namespace Cheezy
 {
-	Transform2DComponent::Transform2DComponent(const glm::vec3& position, const glm::vec2& size, float rotation)
-		: m_Position(position), m_Size(size), m_Rotation(rotation)
+	Transform2DComponent::Transform2DComponent(const Transform2D& transform)
+		: m_Transform(transform)
 	{
 	}
 }

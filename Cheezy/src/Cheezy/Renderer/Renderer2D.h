@@ -17,7 +17,7 @@ namespace Cheezy
 		static void Shutdown();
 
 		static void BeginScene(const OrthographicCamera& camera);
-		static void BeginScene(const Scene2D& scene);
+		static void BeginScene(const Ref<Scene2D>& scene);
 		static void EndScene();
 		static void Flush();
 

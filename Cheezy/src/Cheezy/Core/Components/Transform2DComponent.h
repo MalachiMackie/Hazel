@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cheezy/Core/Components/CheezyComponent.h"
+#include "Cheezy/Core/Transform2D.h"
 
 #include <glm/glm.hpp>
 
@@ -11,26 +12,23 @@ namespace Cheezy
 	class Transform2DComponent : public CheezyComponent
 	{
 	public:
-		Transform2DComponent(
-			const glm::vec3& position = glm::vec3(0.0f),
-			const glm::vec2& size = glm::vec2(1.0f),
-			float rotation = 0.0f);
+		Transform2DComponent(const Transform2D& transform = {});
 
 		virtual bool IsUniqueComponent() const override { return true; }
 		virtual std::string GetComponentName() const override { return CZ_TRANSFORM_2D_COMPONENT; };
 
-		const glm::vec3& GetPosition() const { return m_Position; }
-		void SetPosition(const glm::vec3& position) { m_Position = position; }
+		const glm::vec3& GetPosition() const { return m_Transform.Position; }
+		void SetPosition(const glm::vec3& position) { m_Transform.Position = position; }
 
-		const glm::vec2& GetSize() const { return m_Size; }
-		void SetScale(const glm::vec2& scale) { m_Size = scale; }
+		const glm::vec2& GetScale() const { return m_Transform.Scale; }
+		void SetScale(const glm::vec2& scale) { m_Transform.Scale = scale; }
 
-		const float GetRotation() const { return m_Rotation; }
-		void SetRotation(float rotation) { m_Rotation = rotation; }
+		const float GetRotation() const { return m_Transform.Rotation; }
+		void SetRotation(float rotation) { m_Transform.Rotation = rotation; }
+
+		const Transform2D& GetTransform() const { return m_Transform; }
 
 	private:
-		glm::vec3 m_Position;
-		glm::vec2 m_Size;
-		float m_Rotation;
+		Transform2D m_Transform;
 	};
 }

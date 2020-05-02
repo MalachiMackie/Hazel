@@ -4,6 +4,7 @@
 #include "Cheezy/Core/Input.h"
 #include "Cheezy/Core/KeyCodes.h"
 #include "Cheezy/Core/MouseCodes.h"
+#include "Cheezy/Core/Transform2D.h"
 
 #include "Cheezy/Core/Components/Transform2DComponent.h"
 #include "Cheezy/Core/Components/RigidBody2DComponent.h"
@@ -13,16 +14,6 @@
 
 namespace Cheezy
 {
-	static glm::vec3* GetTransformPosition(const Transform2DComponent* transform)
-	{
-		return const_cast<glm::vec3*>(&transform->GetPosition());
-	}
-
-	static void SetTransformPosition(Transform2DComponent* transform, const glm::vec3& position)
-	{
-		transform->SetPosition(position);
-	}
-
 	static bool IsKeyPressed(int keycode)
 	{
 		return Input::IsKeyPressed((KeyCode)keycode);
@@ -167,7 +158,7 @@ namespace Cheezy
 			.endClass()
 			.beginClass<CheezyComponent>("CheezyComponent").endClass()
 				.deriveClass<Transform2DComponent, CheezyComponent>("Transform")
-					.addProperty("Position", &GetTransformPosition, &SetTransformPosition)
+					.addProperty("Transform", &Transform2DComponent::GetTransform)
 				.endClass()
 				.deriveClass<RigidBodyComponent, CheezyComponent>("RigidBody")
 					.addFunction("GetVelocity", &RigidBodyComponent::GetVelocity)
@@ -186,6 +177,12 @@ namespace Cheezy
 				.addFunction("GetMagnitude", &GetVec2Magnitude)
 			.endClass()
 			.beginClass<Collision2D>("Collision2D")
+			.endClass()
+			.beginClass<Transform2D>("Transform2D")
+				.addConstructor<void(*) (glm::vec3, glm::vec2, float)>()
+				.addProperty("Position", &Transform2D::Position, true)
+				.addProperty("Scale", &Transform2D::Scale, true)
+				.addProperty("Rotation", &Transform2D::Rotation, true)
 			.endClass()
 			.addFunction("IsKeyDown", IsKeyPressed);
 

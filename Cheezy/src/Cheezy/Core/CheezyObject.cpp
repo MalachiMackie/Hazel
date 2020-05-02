@@ -26,19 +26,19 @@ namespace Cheezy
 			component->OnUpdate(ts);
 	}
 
-	void CheezyObject::OnCollision(Collision2D collision)
+	void CheezyObject::OnCollision(const Collision2D& collision)
 	{
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollision(collision);
 	}
 
-	void CheezyObject::OnCollisionEnter(Collision2D collision)
+	void CheezyObject::OnCollisionEnter(const Collision2D& collision)
 	{
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollisionEnter(collision);
 	}
 
-	void CheezyObject::OnCollisionExit(Collision2D collision)
+	void CheezyObject::OnCollisionExit(const Collision2D& collision)
 	{
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollisionExit(collision);

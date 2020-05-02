@@ -1,6 +1,8 @@
 #include "hzpch.h"
 #include "RigidBody2DComponent.h"
 
+#include "Cheezy/Core/Application.h"
+
 #include <glm/geometric.hpp>
 
 namespace Cheezy
@@ -19,12 +21,6 @@ namespace Cheezy
 	void RigidBodyComponent::OnCollisionEnter(Collision2D collision)
 	{
 		m_CurrentCollisions.push_back(collision.OtherCollider);
-
-		glm::vec3 position = m_Transform->GetPosition();
-		position -= glm::vec3(collision.PushVector, 0.0f);
-
-		m_Transform->SetPosition(position);
-		m_Velocity -= glm::normalize(collision.PushVector) * glm::length(m_Velocity);
 	}
 
 	void RigidBodyComponent::OnCollisionExit(Collision2D collision)
@@ -49,10 +45,26 @@ namespace Cheezy
 			m_Velocity = glm::vec2(0.0f);
 		}
 
-		glm::vec3 position = m_Transform->GetPosition();
-		position += (glm::vec3(m_Velocity, 0.0f) * 0.02f);
+		if (m_UseGravity)
+			m_Velocity += (Application::GetGravity() * Application::GetFixedFrameTime());
 
-		m_Transform->SetPosition(position);
+		const glm::vec3& prevPosition = m_Transform->GetPosition();
+		glm::vec3 newPosition = prevPosition;
+
+		newPosition += (glm::vec3(m_Velocity, 0.0f) * 0.02f);
+
+		std::vector<Collision2D>& possibleCollisions = BoxCollider2DComponent::CheckCollisionForObjectWithTransform(
+			m_CheezyObject,
+			{ newPosition, m_Transform->GetScale(), m_Transform->GetRotation() });
+
+		for (Collision2D& collision : possibleCollisions)
+		{
+			newPosition += glm::vec3(collision.PushVector, 0.0f);
+		}
+
+		m_Velocity = (newPosition - prevPosition) / 0.02f;
+
+		m_Transform->SetPosition(newPosition);
 	}
 
 	void RigidBodyComponent::OnUpdate(Timestep ts)

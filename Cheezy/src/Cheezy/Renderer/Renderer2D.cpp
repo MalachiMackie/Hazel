@@ -125,17 +125,17 @@ namespace Cheezy
 		s_Data.TextureSlotIndex = 1;
 	}
 
-	void Renderer2D::BeginScene(const Scene2D& scene)
+	void Renderer2D::BeginScene(const Ref<Scene2D>& scene)
 	{
 		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", scene.GetCameraController().GetCamera().GetViewProjectionMatrix());
+		s_Data.TextureShader->SetMat4("u_ViewProjection", scene->GetCameraController().GetCamera().GetViewProjectionMatrix());
 
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 		s_Data.QuadIndexCount = 0;
 
 		s_Data.TextureSlotIndex = 1;
 
-		for (const Ref<CheezyObject>& object : scene.GetObjects())
+		for (const Ref<CheezyObject>& object : scene->GetObjects())
 		{
 			Ref<Shape2D> shape = object->GetShape();
 			if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -147,7 +147,7 @@ namespace Cheezy
 
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), shape->GetPosition() + objectTransform->GetPosition());
 			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(shape->GetRotation() + objectTransform->GetRotation()), { 0.0f, 0.0f, 1.0f });
-			transform *= glm::scale(glm::mat4(1.0f), { shapeScale.x * objectTransform->GetSize().x, shapeScale.y * objectTransform->GetSize().y, 1.0f });
+			transform *= glm::scale(glm::mat4(1.0f), { shapeScale.x * objectTransform->GetScale().x, shapeScale.y * objectTransform->GetScale().y, 1.0f });
 
 			float textureIndex = -1.0f;
 

@@ -33,7 +33,7 @@ namespace Cheezy
 		{
 			static_assert(std::is_base_of<CheezyComponent, T>::value, "Type is not a cheezy component");
 			std::vector<Ref<CheezyObject>> objectsWithComponent;
-			for (Ref<CheezyObject> obj : m_Objects)
+			for (const Ref<CheezyObject>& obj : m_Objects)
 			{
 				if (obj->ContainsComponent<T>())
 				{
@@ -43,8 +43,6 @@ namespace Cheezy
 
 			return objectsWithComponent;
 		}
-
-		void CheckCollisions() const;
 
 	private:
 		OrthographicCameraController m_CameraController;

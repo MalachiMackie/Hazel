@@ -11,6 +11,9 @@ namespace Cheezy
 {
 	Application* Application::s_Instance = nullptr;
 
+	const glm::vec2 Application::m_Gravity = glm::vec2(0.0f, -9.81f);
+	float Application::m_FixedFrameTime = 1.0f/50.0f;
+
 	Application::Application()
 	{
 		CZ_PROFILE_FUNCTION();
@@ -70,7 +73,7 @@ namespace Cheezy
 	{
 		using clock = std::chrono::high_resolution_clock;
 
-		const std::chrono::milliseconds fixedFrameTime(20);
+		const std::chrono::milliseconds fixedFrameTime((int)(m_FixedFrameTime * 1000.0f));
 
 		std::chrono::nanoseconds lag(0);
 		auto timeStart = clock::now();
@@ -88,18 +91,19 @@ namespace Cheezy
 			static int updates = 0;
 			static float frameTimeSum = 0;
 			
+			auto milliseconds = std::chrono::duration_cast<std::chrono::microseconds>(frameTime).count() / 1000.0f;
+			Timestep timestep = milliseconds / 1000.0f;
 			if (std::chrono::time_point_cast<std::chrono::seconds>(timeStart) != std::chrono::time_point_cast<std::chrono::seconds>(currentTime))
 			{
-				CZ_CORE_TRACE("FixedUpdates: {0}, Updates: {1}, Avg FPS: {2}, Avg Frame Time: {3}", fixedUpdates, updates, 1 / (frameTimeSum / updates), (frameTimeSum / updates));
+				CZ_CORE_TRACE("FixedUpdates: {0}, Updates: {1}, Avg Frame Time: {2}", fixedUpdates, updates, (frameTimeSum / updates));
 				fixedUpdates = 0;
 				updates = 0;
 				frameTimeSum = 0;
 			}
 			timeStart = currentTime;
 
-			lag += std::chrono::duration_cast<std::chrono::nanoseconds>(frameTime);
+			lag += frameTime;
 
-			Timestep timestep = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime).count() / 1000.0f;
 			frameTimeSum += timestep;
 
 			if (!m_Minimized)
@@ -109,8 +113,6 @@ namespace Cheezy
 				++updates;
 				for (Ref<Layer> layer : m_LayerStack)
 					layer->OnUpdate(timestep);
-
-				uint32_t updates = 0;
 				
 				while (lag >= fixedFrameTime)
 				{

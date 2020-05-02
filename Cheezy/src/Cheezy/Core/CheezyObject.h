@@ -27,7 +27,7 @@ namespace Cheezy
 		void OnUpdate(Timestep ts);
 
 		template<typename T>
-		void AddComponent(Ref<T> component)
+		void AddComponent(Ref<T>& component)
 		{
 			static_assert(std::is_base_of<CheezyComponent, T>::value, "the passed component isn't a Cheezy Component");
 			if (component->IsUniqueComponent()
@@ -70,17 +70,17 @@ namespace Cheezy
 		}
 
 		template<typename T>
-		void SetShape(T* shape)
+		void SetShape(const Ref<T>& shape)
 		{
 			static_assert(std::is_base_of<Shape2D, T>::value, "The passed shape isn't a shape2D");
-			m_Shape.reset(shape);
+			m_Shape = shape;
 		}
 
 		Ref<CheezyObject> Get() { return shared_from_this(); }
 
-		void OnCollision(Collision2D collision);
-		void OnCollisionEnter(Collision2D collision);
-		void OnCollisionExit(Collision2D collision);
+		void OnCollision(const Collision2D& collision);
+		void OnCollisionEnter(const Collision2D& collision);
+		void OnCollisionExit(const Collision2D& collision);
 
 	private:
 		std::vector<Ref<CheezyComponent>> m_Components;
