@@ -25,7 +25,7 @@ namespace Cheezy
 
 	void RigidBodyComponent::OnCollisionExit(Collision2D collision)
 	{
-		auto& found = std::find_if(m_CurrentCollisions.begin(), m_CurrentCollisions.end(), 
+		auto& found = std::find_if(m_CurrentCollisions.begin(), m_CurrentCollisions.end(),
 			[&collision](Ref<BoxCollider2DComponent>& currentCol) { return currentCol == collision.OtherCollider; });
 		if (found != m_CurrentCollisions.end())
 			m_CurrentCollisions.erase(found);
@@ -60,6 +60,39 @@ namespace Cheezy
 		for (Collision2D& collision : possibleCollisions)
 		{
 			newPosition += glm::vec3(collision.PushVector, 0.0f);
+			Ref<CheezyObject>& otherObject = collision.OtherCollider->GetCheezyObject();
+
+			Collision2D otherCollision{ collision.PushVector * -1.0f, m_CheezyObject->GetComponent<BoxCollider2DComponent>() };
+
+			if (!std::any_of(m_CurrentCollisions.begin(), m_CurrentCollisions.end(),
+				[&collision](const Ref<BoxCollider2DComponent>& otherCollider)
+			{
+				return collision.OtherCollider.get() == otherCollider.get();
+			}))
+			{
+				m_CheezyObject->OnCollisionEnter(collision);
+				otherObject->OnCollisionEnter(otherCollision);
+			}
+
+			m_CheezyObject->OnCollision(collision);
+			otherObject->OnCollision(otherCollision);
+		}
+
+		for (Ref<BoxCollider2DComponent>& existingCollider : m_CurrentCollisions)
+		{
+			Ref<CheezyObject>& otherObject = existingCollider->GetCheezyObject();
+			Collision2D collision{ glm::vec3(0.0f), existingCollider };
+			Collision2D otherCollision{ glm::vec3(0.0f), m_CheezyObject->GetComponent<BoxCollider2DComponent>() };
+
+			if (!std::any_of(possibleCollisions.begin(), possibleCollisions.end(),
+				[&existingCollider](Collision2D& collision)
+			{
+				return existingCollider.get() == collision.OtherCollider.get();
+			}))
+			{
+				m_CheezyObject->OnCollisionExit(collision);
+				otherObject->OnCollisionExit(otherCollision);
+			}
 		}
 
 		m_Velocity = (newPosition - prevPosition) / 0.02f;

@@ -34,7 +34,7 @@ void Sandbox2D::OnAttach()
 
 	const Ref<CheezyObject>& floor = CreateRef<CheezyObject>();
 	floor->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(0.0f, -3.0f, 0.0f), glm::vec2(10.0f, 1.0f) }));
-	floor->AddComponent(CreateRef<BoxCollider2DComponent>());
+	floor->AddComponent(CreateRef<BoxCollider2DComponent>(glm::vec2(1.0f), "Floor"));
 	floor->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), m_CheckerboardTexture));
 	m_Scene->AddObject(floor);
 	

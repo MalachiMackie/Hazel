@@ -17,8 +17,9 @@ namespace Cheezy
 		virtual void OnFixedUpdate() override;
 		virtual void OnUpdate(Timestep ts) override;
 
-		void AddForce(glm::vec2 force);
 		glm::vec2 GetVelocity() { return m_Velocity; }
+
+		void AddForce(glm::vec2 force);
 
 		virtual void OnCollision(Collision2D collision) override;
 		virtual void OnCollisionEnter(Collision2D collision) override;
@@ -28,7 +29,7 @@ namespace Cheezy
 
 	private:
 		glm::vec2 m_Velocity = glm::vec2(0.0f);
-		float m_Drag = 0.95f;
+		float m_Drag = 0.98f;
 
 		Ref<Transform2DComponent> m_Transform;
 		bool m_UseGravity = true;

@@ -126,8 +126,9 @@ namespace Cheezy
 		return verts;
 	}
 
-	BoxCollider2DComponent::BoxCollider2DComponent(const glm::vec2& dimensions)
+	BoxCollider2DComponent::BoxCollider2DComponent(const glm::vec2& dimensions, const char* tag)
 		: m_Dimensions(dimensions),
+		m_Tag(tag),
 		m_Vertices({ glm::vec2(0, 0), {dimensions.x, 0}, {dimensions.x, dimensions.y}, {0, dimensions.y} })
 	{
 		

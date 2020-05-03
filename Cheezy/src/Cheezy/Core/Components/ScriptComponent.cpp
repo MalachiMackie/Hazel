@@ -25,6 +25,11 @@ namespace Cheezy
 		return obj->GetComponent<T>().get();
 	}
 
+	static BoxCollider2DComponent* GetCollisionBoxCollider(Collision2D* collision)
+	{
+		return collision->OtherCollider.get();
+	}
+	
 	static float GetVec2Magnitude(const glm::vec2* vec)
 	{
 		return glm::length(*vec);
@@ -164,6 +169,9 @@ namespace Cheezy
 					.addFunction("GetVelocity", &RigidBodyComponent::GetVelocity)
 					.addFunction("AddForce", &RigidBodyComponent::AddForce)
 				.endClass()
+				.deriveClass<BoxCollider2DComponent, CheezyComponent>("BoxCollider")
+					.addProperty("Tag", &BoxCollider2DComponent::GetTag)
+				.endClass()
 			.beginClass<glm::vec3>("Vec3")
 				.addConstructor<void(*) (float, float, float)>()
 				.addProperty("x", &glm::vec3::x, true)
@@ -177,6 +185,7 @@ namespace Cheezy
 				.addFunction("GetMagnitude", &GetVec2Magnitude)
 			.endClass()
 			.beginClass<Collision2D>("Collision2D")
+				.addFunction("GetCollider", &GetCollisionBoxCollider)
 			.endClass()
 			.beginClass<Transform2D>("Transform2D")
 				.addConstructor<void(*) (glm::vec3, glm::vec2, float)>()
