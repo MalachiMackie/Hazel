@@ -71,6 +71,11 @@ namespace Cheezy
 
 	void Application::Run()
 	{
+		for (Ref<Layer>& layer : m_LayerStack)
+		{
+			layer->OnStart();
+		}
+
 		using clock = std::chrono::high_resolution_clock;
 
 		const std::chrono::milliseconds fixedFrameTime((int)(m_FixedFrameTime * 1000.0f));

@@ -25,6 +25,7 @@
 #include "Cheezy/Core/Components/ScriptComponent.h"
 #include "Cheezy/Core/Components/Transform2Dcomponent.h"
 #include "Cheezy/Core/Components/RigidBody2DComponent.h"
+#include "Cheezy/Core/Components/CameraComponent.h"
 
 #include "Cheezy/Debug/Instumentor.h"
 

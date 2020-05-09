@@ -11,6 +11,7 @@ namespace Cheezy
 		Layer(const std::string& name = "Layer");
 		virtual ~Layer() = default;
 
+		virtual void OnStart() {}
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
 		/*

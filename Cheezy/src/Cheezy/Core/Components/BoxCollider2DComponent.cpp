@@ -310,8 +310,11 @@ namespace Cheezy
 		const std::vector<Ref<CheezyObject>>& objects = Application::Get()->GetScene()->GetObjects();
 		
 		const Ref<BoxCollider2DComponent>& collider = cheezyObject->GetComponent<BoxCollider2DComponent>();
-
 		std::vector<Collision2D> collisions;
+
+		if (!collider)
+			return collisions;
+
 
 		for (const Ref<CheezyObject>& other : objects)
 		{
@@ -320,6 +323,9 @@ namespace Cheezy
 
 			const auto& obj2Collider = other->GetComponent<BoxCollider2DComponent>();
 			const auto& obj2Transform = other->GetComponent<Transform2DComponent>()->GetTransform();
+
+			if (!obj2Collider)
+				continue;
 
 			auto [collision, minPushVector] = BoxCollider2DComponent::CheckCollisionBetweenColliders(collider, transform, obj2Collider, obj2Transform);
 

@@ -10,8 +10,6 @@ namespace Cheezy
 {
 	void Scene2D::OnFixedUpdate()
 	{
-		m_CameraController.OnFixedUpdate();
-
 		for (Ref<CheezyObject>& obj : m_Objects)
 			obj->OnFixedUpdate();
 	}
@@ -19,15 +17,18 @@ namespace Cheezy
 	void Scene2D::OnUpdate(Timestep ts)
 	{
 		CZ_PROFILE_FUNCTION();
-
-		m_CameraController.OnUpdate(ts);
-
 		for (Ref<CheezyObject>& obj : m_Objects)
 			obj->OnUpdate(ts);
 	}
 
 	void Scene2D::OnEvent(Event& e)
 	{
-		m_CameraController.OnEvent(e);
+	}
+
+	void Scene2D::OnStart()
+	{
+		CZ_PROFILE_FUNCTION();
+		for (Ref<CheezyObject>& obj : m_Objects)
+			obj->OnStart();
 	}
 }

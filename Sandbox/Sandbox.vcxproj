@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CZ_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Cheezy\vendor\spdlog\include;..\Cheezy\vendor\lua\include;..\Cheezy\src;..\Cheezy\vendor;..\Cheezy\vendor\glm;..\Cheezy\vendor\LuaBridge;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Cheezy\vendor\spdlog\include;..\Cheezy\src;..\Cheezy\vendor;..\Cheezy\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CZ_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Cheezy\vendor\spdlog\include;..\Cheezy\vendor\lua\include;..\Cheezy\src;..\Cheezy\vendor;..\Cheezy\vendor\glm;..\Cheezy\vendor\LuaBridge;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Cheezy\vendor\spdlog\include;..\Cheezy\src;..\Cheezy\vendor;..\Cheezy\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -119,7 +119,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CZ_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Cheezy\vendor\spdlog\include;..\Cheezy\vendor\lua\include;..\Cheezy\src;..\Cheezy\vendor;..\Cheezy\vendor\glm;..\Cheezy\vendor\LuaBridge;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Cheezy\vendor\spdlog\include;..\Cheezy\src;..\Cheezy\vendor;..\Cheezy\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -139,14 +139,13 @@
   <ItemGroup>
     <ClInclude Include="src\ExampleLayer.h" />
     <ClInclude Include="src\Sandbox2D.h" />
+    <ClInclude Include="src\Scripts\CameraScript.h" />
+    <ClInclude Include="src\Scripts\PlayerMovementScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ExampleLayer.cpp" />
     <ClCompile Include="src\Sandbox2D.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\scripts\test.lua" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cheezy\Cheezy.vcxproj">
@@ -156,4 +155,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 

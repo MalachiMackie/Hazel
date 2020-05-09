@@ -14,6 +14,12 @@ namespace Cheezy
 	{
 	}
 
+	void CheezyObject::OnStart()
+	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnStart();
+	}
+
 	void CheezyObject::OnFixedUpdate()
 	{
 		for (Ref<CheezyComponent>& component : m_Components)

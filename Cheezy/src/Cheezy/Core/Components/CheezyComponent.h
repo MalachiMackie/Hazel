@@ -19,6 +19,7 @@ namespace Cheezy
 		virtual bool IsUniqueComponent() const = 0;
 		virtual std::string GetComponentName() const = 0;
 
+		virtual void OnStart() {}
 		/*
 			Runs 50 times per second.
 			Will run multiple times per rendered frame if it has to

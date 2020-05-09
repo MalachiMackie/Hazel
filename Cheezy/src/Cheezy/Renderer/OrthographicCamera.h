@@ -17,7 +17,6 @@ namespace Cheezy
 		float GetRotation() const { return m_Rotation; }
 		void SetRotation(const float rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 
-
 		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
 		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }

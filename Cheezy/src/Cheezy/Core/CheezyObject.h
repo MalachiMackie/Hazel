@@ -19,6 +19,7 @@ namespace Cheezy
 	public:
 		CheezyObject();
 
+		void OnStart();
 		/*
 			Runs 50 times per second.
 			Will run multiple times per rendered frame if it has to
@@ -78,6 +79,9 @@ namespace Cheezy
 
 		Ref<CheezyObject> Get() { return shared_from_this(); }
 
+		const char* GetTag() { return m_Tag; }
+		void SetTag(const char* tag) { m_Tag = tag; }
+
 		void OnCollision(const Collision2D& collision);
 		void OnCollisionEnter(const Collision2D& collision);
 		void OnCollisionExit(const Collision2D& collision);
@@ -85,5 +89,6 @@ namespace Cheezy
 	private:
 		std::vector<Ref<CheezyComponent>> m_Components;
 		Ref<Shape2D> m_Shape;
+		const char* m_Tag;
 	};
 }

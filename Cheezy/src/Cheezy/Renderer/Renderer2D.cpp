@@ -6,6 +6,7 @@
 #include "Cheezy/Renderer/RenderCommand.h"
 
 #include "Cheezy/Core/Components/Transform2DComponent.h"
+#include "Cheezy/Core/Components/CameraComponent.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -128,16 +129,29 @@ namespace Cheezy
 	void Renderer2D::BeginScene(const Ref<Scene2D>& scene)
 	{
 		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", scene->GetCameraController().GetCamera().GetViewProjectionMatrix());
+		const auto& sceneObjects = scene->GetObjects();
+
+		for (const auto& object : sceneObjects)
+		{
+			const auto& cameraComponent = object->GetComponent<CameraComponent>();
+			if (cameraComponent)
+			{
+				s_Data.TextureShader->SetMat4("u_ViewProjection", cameraComponent->GetCamera()->GetViewProjectionMatrix());
+				break;
+			}
+		}
 
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 		s_Data.QuadIndexCount = 0;
 
 		s_Data.TextureSlotIndex = 1;
 
-		for (const Ref<CheezyObject>& object : scene->GetObjects())
+		for (const Ref<CheezyObject>& object : sceneObjects)
 		{
 			Ref<Shape2D> shape = object->GetShape();
+			if (!shape)
+				continue;
+
 			if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 				FlushAndReset();
 

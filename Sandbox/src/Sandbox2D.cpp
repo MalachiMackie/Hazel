@@ -1,5 +1,8 @@
 #include "Sandbox2D.h"
 
+#include "Scripts/CameraScript.h"
+#include "Scripts/PlayerMovementScript.h"
+
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -7,7 +10,7 @@ using namespace Cheezy;
 
 Sandbox2D::Sandbox2D()
 	: Layer("Sandbox 2D"),
-	m_Scene(CreateRef<Scene2D>(OrthographicCameraController{ 1280.0f / 720.0f, true }))
+	m_Scene(CreateRef<Scene2D>())
 {
 }
 
@@ -18,27 +21,33 @@ void Sandbox2D::OnAttach()
 	m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 	m_ChernoLogoTexture = Texture2D::Create("assets/textures/ChernoLogo.png");
 
-	auto mObject = CreateRef<CheezyObject>();
+	auto& cameraObject = CreateRef<CheezyObject>();
+	cameraObject->AddComponent(CreateRef<Transform2DComponent>());
+	cameraObject->AddComponent(CreateRef<CameraComponent>(1280.0f / 720.0f));
+	cameraObject->AddComponent(CreateRef<CameraScript>());
+	m_Scene->AddObject(cameraObject);
+
+	auto& mObject = CreateRef<CheezyObject>();
+	mObject->SetTag("Player");
 	mObject->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(2.0f, 0.0f, 0.0f) }));
-	mObject->AddComponent(CreateRef<ScriptComponent>("src/scripts/test.lua"));
+	mObject->AddComponent(CreateRef<PlayerMovementScript>());
 	mObject->AddComponent(CreateRef<BoxCollider2DComponent>());
 	mObject->AddComponent(CreateRef<RigidBodyComponent>());
 	mObject->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.6f, 0.1f, 0.8f, 1.0f), m_CheckerboardTexture));
 	m_Scene->AddObject(mObject);
 
-	const Ref<CheezyObject>& mObject2 = CreateRef<CheezyObject>();
+	auto& mObject2 = CreateRef<CheezyObject>();
 	mObject2->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(0.0f), glm::vec2(1.0f), 45.0f }));
 	mObject2->AddComponent(CreateRef<BoxCollider2DComponent>());
 	mObject2->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.6f, 0.1f, 0.9f, 1.0f)));
 	m_Scene->AddObject(mObject2);
-
-	const Ref<CheezyObject>& floor = CreateRef<CheezyObject>();
-	floor->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(0.0f, -3.0f, 0.0f), glm::vec2(10.0f, 1.0f) }));
-	floor->AddComponent(CreateRef<BoxCollider2DComponent>(glm::vec2(1.0f), "Floor"));
-	floor->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), m_CheckerboardTexture));
-	m_Scene->AddObject(floor);
 	
 	Application::Get()->SetScene(m_Scene);
+}
+
+void Sandbox2D::OnStart()
+{
+	m_Scene->OnStart();
 }
 
 void Sandbox2D::OnDetach()

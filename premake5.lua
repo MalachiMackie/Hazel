@@ -19,8 +19,6 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"]		= "Cheezy/vendor/GLFW/include"
 IncludeDir["Glad"]		= "Cheezy/vendor/Glad/include"
-IncludeDir["lua"]		= "Cheezy/vendor/lua/include"
-IncludeDir["LuaBridge"]	= "Cheezy/vendor/LuaBridge"
 IncludeDir["ImGui"]		= "Cheezy/vendor/imgui"
 IncludeDir["glm"]		= "Cheezy/vendor/glm"
 IncludeDir["stb_image"] = "Cheezy/vendor/stb_image"
@@ -53,10 +51,7 @@ project "Cheezy"
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl",
-		"%{prj.name}/vendor/lua/**.h",
-		"%{prj.name}/vendor/lua/**.hpp",
-		"%{prj.name}/vendor/LuaBridge/**.h"
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	defines
@@ -70,16 +65,9 @@ project "Cheezy"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.LuaBridge}",
-		"%{IncludeDir.lua}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}"
-	}
-
-	libdirs
-	{
-		"%{prj.name}/vendor/lua"
 	}
 
 	links
@@ -87,8 +75,7 @@ project "Cheezy"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib",
-		"lua53"
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -128,18 +115,15 @@ project "Sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/**.lua"
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
 	{
 		"Cheezy/vendor/spdlog/include",
-		"Cheezy/vendor/lua/include",
 		"Cheezy/src",
 		"Cheezy/vendor",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.LuaBridge}"
+		"%{IncludeDir.glm}"
 	}
 
 	links
