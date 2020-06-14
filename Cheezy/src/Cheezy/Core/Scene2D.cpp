@@ -23,6 +23,8 @@ namespace Cheezy
 
 	void Scene2D::OnEvent(Event& e)
 	{
+		for (Ref<CheezyObject>& obj : m_Objects)
+			obj->OnEvent(e);
 	}
 
 	void Scene2D::OnStart()

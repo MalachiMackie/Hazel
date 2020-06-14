@@ -9,7 +9,7 @@
 
 namespace Cheezy
 {
-	class BoxCollider2DComponent : public CheezyComponent
+	class BoxCollider2DComponent : public CheezyComponent, public std::enable_shared_from_this<BoxCollider2DComponent>
 	{
 	private:
 		static constexpr int MaxVertices = 4;
@@ -31,8 +31,12 @@ namespace Cheezy
 		const std::array<glm::vec2, MaxVertices>& GetVertices() const { return m_Vertices; }
 		const char* GetTag() const { return m_Tag; }
 
+		Ref<BoxCollider2DComponent> Get() { return shared_from_this(); }
+
 		std::vector<Ref<BoxCollider2DComponent>> GetCollidingWith() const { return m_CollidingWith; }
 
+		//static collision detection
+	public:
 		static std::pair<bool, glm::vec2> CheckCollisionBetweenColliders(
 			const Ref<BoxCollider2DComponent>& collider1, const Transform2D& transform1,
 			const Ref<BoxCollider2DComponent>& collider2, const Transform2D& transform2);
@@ -47,6 +51,8 @@ namespace Cheezy
 		std::array<glm::vec2, MaxVertices> m_Vertices;
 		std::vector<Ref<BoxCollider2DComponent>> m_CollidingWith;
 		const char* m_Tag;
+
+		bool m_MouseHovering = false;
 		
 	};
 }

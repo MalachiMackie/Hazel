@@ -3,6 +3,7 @@
 #include "Cheezy/Core/Timestep.h"
 #include "Cheezy/Core/Shapes/Shape2D.h"
 #include "Cheezy/Core/Collision2D.h"
+#include "Cheezy/Events/Event.h"
 
 #include <vector>
 #include <memory>
@@ -86,9 +87,15 @@ namespace Cheezy
 		void OnCollisionEnter(const Collision2D& collision);
 		void OnCollisionExit(const Collision2D& collision);
 
+		void OnMouseHover();
+		void OnMouseEnter();
+		void OnMouseExit();
+
+		void OnEvent(Event& e);
+
 	private:
 		std::vector<Ref<CheezyComponent>> m_Components;
 		Ref<Shape2D> m_Shape;
-		const char* m_Tag;
+		const char* m_Tag = "";
 	};
 }

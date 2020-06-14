@@ -29,7 +29,7 @@ namespace Cheezy
 
 	private:
 		glm::vec2 m_Velocity = glm::vec2(0.0f);
-		float m_Drag = 0.98f;
+		float m_Drag = 0.95f;
 
 		Ref<Transform2DComponent> m_Transform;
 		bool m_UseGravity = false;

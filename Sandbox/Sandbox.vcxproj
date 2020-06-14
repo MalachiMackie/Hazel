@@ -140,6 +140,7 @@
     <ClInclude Include="src\ExampleLayer.h" />
     <ClInclude Include="src\Sandbox2D.h" />
     <ClInclude Include="src\Scripts\CameraScript.h" />
+    <ClInclude Include="src\Scripts\FloorScript.h" />
     <ClInclude Include="src\Scripts\PlayerMovementScript.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 #include "Sandbox2D.h"
 
 #include "Scripts/CameraScript.h"
+#include "Scripts/FloorScript.h"
 #include "Scripts/PlayerMovementScript.h"
 
 #include <imgui/imgui.h>
@@ -21,26 +22,30 @@ void Sandbox2D::OnAttach()
 	m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 	m_ChernoLogoTexture = Texture2D::Create("assets/textures/ChernoLogo.png");
 
+	//camera object
 	auto& cameraObject = CreateRef<CheezyObject>();
 	cameraObject->AddComponent(CreateRef<Transform2DComponent>());
-	cameraObject->AddComponent(CreateRef<CameraComponent>(1280.0f / 720.0f));
+	cameraObject->AddComponent(CreateRef<CameraComponent>(glm::vec2(1280.0f, 720.0f)));
 	cameraObject->AddComponent(CreateRef<CameraScript>());
 	m_Scene->AddObject(cameraObject);
 
-	auto& mObject = CreateRef<CheezyObject>();
-	mObject->SetTag("Player");
-	mObject->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(2.0f, 0.0f, 0.0f) }));
-	mObject->AddComponent(CreateRef<PlayerMovementScript>());
-	mObject->AddComponent(CreateRef<BoxCollider2DComponent>());
-	mObject->AddComponent(CreateRef<RigidBodyComponent>());
-	mObject->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.6f, 0.1f, 0.8f, 1.0f), m_CheckerboardTexture));
-	m_Scene->AddObject(mObject);
+	//Player
+	auto& playerObj = CreateRef<CheezyObject>();
+	playerObj->SetTag("Player");
+	playerObj->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(2.0f, 0.0f, 0.0f) }));
+	playerObj->AddComponent(CreateRef<PlayerMovementScript>());
+	playerObj->AddComponent(CreateRef<BoxCollider2DComponent>());
+	playerObj->AddComponent(CreateRef<RigidBodyComponent>());
+	playerObj->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.6f, 0.1f, 0.8f, 1.0f), m_CheckerboardTexture));
+	m_Scene->AddObject(playerObj);
 
-	auto& mObject2 = CreateRef<CheezyObject>();
-	mObject2->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(0.0f), glm::vec2(1.0f), 45.0f }));
-	mObject2->AddComponent(CreateRef<BoxCollider2DComponent>());
-	mObject2->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.6f, 0.1f, 0.9f, 1.0f)));
-	m_Scene->AddObject(mObject2);
+	//Floor Piece
+	auto& floorObj = CreateRef<CheezyObject>();
+	floorObj->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(0.0f)}));
+	floorObj->AddComponent(CreateRef<FloorScript>());
+	floorObj->AddComponent(CreateRef<BoxCollider2DComponent>());
+	floorObj->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.15f, 0.5f, 0.5f, 0.7f)));
+	m_Scene->AddObject(floorObj);
 	
 	Application::Get()->SetScene(m_Scene);
 }
@@ -96,11 +101,6 @@ void Sandbox2D::OnImGuiRender()
 	CZ_PROFILE_FUNCTION();
 
 	ImGui::Begin("Settings");
-	if (ImGui::CollapsingHeader("Square Settings"))
-	{
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-		ImGui::DragFloat("Square Rotation", &m_SquareRotation, 0.2f, -180.0f, 180.0f);
-	}
 
 	if (ImGui::CollapsingHeader("Renderer2D Stats"))
 	{
