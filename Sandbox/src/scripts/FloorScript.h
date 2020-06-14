@@ -33,6 +33,16 @@ class FloorScript : public ScriptComponent
 		return false;
 	}
 
+	virtual void OnMouseEnter() override
+	{
+		SetColor(s_HighlightedColor);
+	}
+
+	virtual void OnMouseExit() override
+	{
+		SetColor(s_DefaultColor);
+	}
+
 private:
 	void SetColor(glm::vec4 color)
 	{
@@ -42,7 +52,7 @@ private:
 
 private:
 	Ref<Shape2D> m_Shape;
-	glm::vec4 m_Color = s_HighlightedColor;
+	glm::vec4 m_Color = s_DefaultColor;
 
 private:
 	static glm::vec4 s_HighlightedColor;
@@ -50,4 +60,4 @@ private:
 };
 
 glm::vec4 FloorScript::s_HighlightedColor = glm::vec4(1.0f, 1.0f, 0.3f, 0.3f);
-glm::vec4 FloorScript::s_DefaultColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+glm::vec4 FloorScript::s_DefaultColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

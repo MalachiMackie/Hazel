@@ -58,13 +58,19 @@ namespace Cheezy
 
 	void CheezyObject::OnMouseEnter()
 	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnMouseEnter();
 	}
 
 	void CheezyObject::OnMouseHover()
 	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnMouseHover();
 	}
 
 	void CheezyObject::OnMouseExit()
 	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnMouseExit();
 	}
 }

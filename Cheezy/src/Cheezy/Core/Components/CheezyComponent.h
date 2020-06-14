@@ -33,6 +33,10 @@ namespace Cheezy
 		virtual void OnCollisionExit(Collision2D collision) {}
 		virtual void OnEvent(Event& e) {}
 
+		virtual void OnMouseEnter() {}
+		virtual void OnMouseHover() {}
+		virtual void OnMouseExit() {}
+
 		void SetCheezyObject(const Ref<CheezyObject>& cheezyObject) { m_CheezyObject = cheezyObject; }
 		Ref<CheezyObject>& GetCheezyObject() { return m_CheezyObject; }
 
