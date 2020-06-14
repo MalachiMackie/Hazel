@@ -49,4 +49,22 @@ namespace Cheezy
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollisionExit(collision);
 	}
+
+	void CheezyObject::OnEvent(Event& e)
+	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnEvent(e);
+	}
+
+	void CheezyObject::OnMouseEnter()
+	{
+	}
+
+	void CheezyObject::OnMouseHover()
+	{
+	}
+
+	void CheezyObject::OnMouseExit()
+	{
+	}
 }

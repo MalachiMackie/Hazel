@@ -25,11 +25,14 @@ class PlayerMovementScript : public ScriptComponent
 			movementForce -= glm::vec2(0.0f, 1.0f);
 
 		const glm::vec2& velocity = m_Rigidbody->GetVelocity();
-		if (glm::length(velocity) < m_MaxSpeed)
-			m_Rigidbody->AddForce(movementForce);
+		if (movementForce != glm::vec2(0.0f) && glm::length(velocity) < m_MaxSpeed)
+		{
+			m_Rigidbody->AddForce(glm::normalize(movementForce) * m_MoveForce);
+		}
 	}
 
 private:
 	Ref<RigidBodyComponent> m_Rigidbody;
 	float m_MaxSpeed = 7.5f;
+	float m_MoveForce = 1.0f;
 };

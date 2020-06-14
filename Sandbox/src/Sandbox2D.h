@@ -27,10 +27,5 @@ private:
 	Cheezy::Ref<Cheezy::Texture2D> m_CheckerboardTexture;
 	Cheezy::Ref<Cheezy::Texture2D> m_ChernoLogoTexture;
 
-	glm::vec4 m_BackgroundTint = glm::vec4(1.0f);
-	glm::vec4 m_SquareColor = glm::vec4(0.55f, 0.2f, 0.8f, 1.0f);
-	float m_SquareRotation = 45.0f;
-	float m_SquareStep = 0.5f;
-
 	Cheezy::Timestep m_LastTimeStep;
 };

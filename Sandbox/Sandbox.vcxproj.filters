@@ -14,6 +14,7 @@
     <ClInclude Include="src\Scripts\PlayerMovementScript.h">
       <Filter>Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="src\Scripts\FloorScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ExampleLayer.cpp" />

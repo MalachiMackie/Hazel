@@ -3,6 +3,7 @@
 #include "Cheezy/Core/CheezyObject.h"
 #include "Cheezy/Core/Timestep.h"
 #include "Cheezy/Core/Collision2D.h"
+#include "Cheezy/Events/Event.h"
 
 #include <string>
 
@@ -30,6 +31,7 @@ namespace Cheezy
 		virtual void OnCollision(Collision2D collision) {}
 		virtual void OnCollisionEnter(Collision2D collision) {}
 		virtual void OnCollisionExit(Collision2D collision) {}
+		virtual void OnEvent(Event& e) {}
 
 		void SetCheezyObject(const Ref<CheezyObject>& cheezyObject) { m_CheezyObject = cheezyObject; }
 		Ref<CheezyObject>& GetCheezyObject() { return m_CheezyObject; }

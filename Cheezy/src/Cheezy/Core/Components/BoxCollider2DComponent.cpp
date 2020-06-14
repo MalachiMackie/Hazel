@@ -5,6 +5,7 @@
 
 #include "Cheezy/Core/Components/ScriptComponent.h"
 #include "Cheezy/Core/Components/Transform2DComponent.h"
+#include "Cheezy/Core/Components/CameraComponent.h"
 
 #include <glm/gtx/rotate_vector.hpp>
 
@@ -12,6 +13,7 @@
 
 namespace Cheezy
 {
+#pragma region staticHelperFunctions
 	template<int ARRAYSIZE>
 	static glm::vec2 GetCenter(const std::array<glm::vec2, ARRAYSIZE>& verts)
 	{
@@ -45,7 +47,7 @@ namespace Cheezy
 	static std::vector<glm::vec2> EdgesOf(const std::vector<glm::vec2>& verts)
 	{
 		std::vector<glm::vec2> edges;
-		int n = verts.size();
+		size_t n = verts.size();
 
 		for (int i = 0; i < n; ++i)
 			edges.push_back(verts[(i + 1) % n] - verts[i]);
@@ -104,11 +106,24 @@ namespace Cheezy
 	static std::vector<glm::vec2> GetObjectVertices(const Ref<BoxCollider2DComponent>& collider, const Transform2D& transform)
 	{
 		std::vector<glm::vec2> verts;
+		std::array<glm::vec2, 4> colliderVerts = collider->GetVertices();
+		float xScale = colliderVerts[0].x - colliderVerts[1].x;
+		float yScale = colliderVerts[1].y - colliderVerts[2].y;
 
-		glm::vec2& origin1 = GetCenter(collider->GetVertices());// collider->GetVertex(0);
+		for (int i = 0; i < colliderVerts.size(); i++)
+		{
+			glm::vec2 colliderVert{colliderVerts[i]};
+
+			colliderVert.x += (xScale / 2);
+			colliderVert.y += (yScale / 2);
+
+			colliderVerts[i] = colliderVert;
+		}
+
+		glm::vec2& origin1 = GetCenter(colliderVerts);
 		for (int i = 0; i < 4; ++i)
 		{
-			glm::vec2 vert = collider->GetVertex(i);
+			glm::vec2 vert = colliderVerts[i];
 			const glm::vec2& position = transform.Position;
 			const glm::vec2& scale = transform.Scale;
 
@@ -126,24 +141,151 @@ namespace Cheezy
 		return verts;
 	}
 
+	/*
+		Get the orientation of ordered triplet
+		https://www.geeksforgeeks.org/orientation-3-ordered-points/
+		0 -> p, q and r are colinear
+		1 -> Clockwise
+		2 -> AntiClockwise
+	*/
+	static int orientation(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3)
+	{
+		float val =	(p2.y - p1.y) * (p3.x - p2.x) -
+					(p3.y - p2.y) * (p2.x - p1.x);
+
+		if (val == 0.0f) return 0;  // colinear
+
+		return (val > 0) ? 1 : 2; // clock or counterclock wise 
+	}
+
+	/*
+		Given three colinear points p, q and r
+		Check if point q lines on line segment pr
+	*/
+	static bool onSegment(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r)
+	{
+		if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+			q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
+			return true;
+
+		return false;
+	}
+
+	/*
+		Check if line segment p1q1 intersects with p2q2
+		https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+	*/
+	static bool doIntersect(const glm::vec2& p1, const glm::vec2& q1, const glm::vec2& p2, const glm::vec2& q2)
+	{
+		// Find the four orientations needed for general and  special cases 
+		int o1 = orientation(p1, q1, p2);
+		int o2 = orientation(p1, q1, q2);
+		int o3 = orientation(p2, q2, p1);
+		int o4 = orientation(p2, q2, q1);
+
+		// General case 
+		if (o1 != o2 && o3 != o4)
+			return true;
+
+		// Special Cases 
+		// p1, q1 and p2 are colinear and p2 lies on segment p1q1 
+		if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+		// p1, q1 and q2 are colinear and q2 lies on segment p1q1 
+		if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+		// p2, q2 and p1 are colinear and p1 lies on segment p2q2 
+		if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+		// p2, q2 and q1 are colinear and q1 lies on segment p2q2 
+		if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+		return false; // Doesn't fall in any of the above cases 
+	}
+
+	/*
+		Check if a point lies inside a polygon
+		https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+	*/
+	static bool IsPointInsidePolygon(std::vector<glm::vec2> vertices, const glm::vec2& point)
+	{
+		glm::vec2 extreme = { INT_MAX, point.y };
+
+		// Count intersections of the above line with sides of polygon 
+		int count = 0;
+		int i = 0;
+		do
+		{
+			int next = (i + 1) % vertices.size();
+
+			// Check if the line segment from 'p' to 'extreme' intersects 
+			// with the line segment from 'polygon[i]' to 'polygon[next]' 
+			if (doIntersect(vertices[i], vertices[next], point, extreme))
+			{
+				// If the point 'p' is colinear with line segment 'i-next', 
+				// then check if it lies on segment. If it lies, return true, 
+				// otherwise false 
+				if (orientation(vertices[i], point, vertices[next]) == 0)
+					return onSegment(vertices[i], point, vertices[next]);
+
+				count++;
+			}
+			i = next;
+		} while (i != 0);
+
+		// Return true if count is odd, false otherwise 
+		return count & 1;  // Same as (count%2 == 1) 
+	}
+
+#pragma endregion staticHelperFunctions
+
 	BoxCollider2DComponent::BoxCollider2DComponent(const glm::vec2& dimensions, const char* tag)
 		: m_Dimensions(dimensions),
 		m_Tag(tag),
 		m_Vertices({ glm::vec2(0, 0), {dimensions.x, 0}, {dimensions.x, dimensions.y}, {0, dimensions.y} })
 	{
-		
+
 	}
 
 	void BoxCollider2DComponent::OnUpdate(Timestep timestep)
 	{
+		std::vector<glm::vec2> verts = GetObjectVertices(Get(), m_CheezyObject->GetComponent<Transform2DComponent>()->GetTransform());
+		
+		Ref<CheezyObject> cameraObject;
+		for (const Ref<CheezyObject>& obj : Application::Get()->GetScene()->GetObjects())
+		{
+			if (obj->ContainsComponent<CameraComponent>())
+			{
+				cameraObject = obj;
+				break;
+			}
+		}
 
+		Ref<CameraComponent> cameraComponent = cameraObject->GetComponent<CameraComponent>();
+
+		auto [mouseX, mouseY] = Input::GetMousePos();
+		glm::vec2 mouseInWorld = cameraComponent->CameraToWorldSpace(glm::vec2(mouseX, mouseY));
+
+		if (IsPointInsidePolygon(verts, mouseInWorld))
+		{
+			if (!m_MouseHovering)
+			{
+				m_CheezyObject->OnMouseEnter();
+				m_MouseHovering = true;
+			}
+			m_CheezyObject->OnMouseHover();
+		}
+		else if (m_MouseHovering)
+		{
+			m_CheezyObject->OnMouseExit();
+			m_MouseHovering = false;
+		}
 	}
 
 	void BoxCollider2DComponent::OnCollision(Collision2D collision)
 	{
 
 	}
-
 
 	void BoxCollider2DComponent::OnCollisionEnter(Collision2D collision)
 	{
@@ -163,6 +305,12 @@ namespace Cheezy
 		}
 	}
 
+#pragma region collisionDetection
+	/*
+	 * Check collision between two box colliders
+	 * using Separating Axis Theorem. Algorithm found here:
+	 * https://hackmd.io/@US4ofdv7Sq2GRdxti381_A/ryFmIZrsl?type=view
+	 */
 	std::pair<bool, glm::vec2> BoxCollider2DComponent::CheckCollisionBetweenColliders(
 		const Ref<BoxCollider2DComponent>& collider1, const Transform2D& transform1,
 		const Ref<BoxCollider2DComponent>& collider2, const Transform2D& transform2)
@@ -180,9 +328,9 @@ namespace Cheezy
 		{
 			if (!std::any_of(edges.begin(), edges.end(),
 				[&edge1](const glm::vec2& curr)
-				{
-					return (edge1.x == curr.x && edge1.y == curr.y);
-				}))
+			{
+				return (edge1.x == curr.x && edge1.y == curr.y);
+			}))
 			{
 				edges.push_back(edge1);
 			}
@@ -191,9 +339,9 @@ namespace Cheezy
 		{
 			if (!std::any_of(edges.begin(), edges.end(),
 				[&edge2](const glm::vec2& curr)
-				{
-					return (edge2.x == curr.x && edge2.y == curr.y);
-				}))
+			{
+				return (edge2.x == curr.x && edge2.y == curr.y);
+			}))
 			{
 				edges.push_back(edge2);
 			}
@@ -308,7 +456,7 @@ namespace Cheezy
 	std::vector<Collision2D> BoxCollider2DComponent::CheckCollisionForObjectWithTransform(const Ref<CheezyObject>& cheezyObject, const Transform2D& transform)
 	{
 		const std::vector<Ref<CheezyObject>>& objects = Application::Get()->GetScene()->GetObjects();
-		
+
 		const Ref<BoxCollider2DComponent>& collider = cheezyObject->GetComponent<BoxCollider2DComponent>();
 		std::vector<Collision2D> collisions;
 
@@ -337,4 +485,6 @@ namespace Cheezy
 
 		return collisions;
 	}
+
+#pragma endregion collisionDetection
 }
