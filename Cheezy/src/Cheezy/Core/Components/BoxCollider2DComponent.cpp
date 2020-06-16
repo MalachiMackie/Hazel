@@ -484,22 +484,6 @@ namespace Cheezy
 			}
 		}
 	}
-				(*cheezyObject)->OnCollisionExit(Collision2D{ glm::vec2(0.0f), otherCollider });
-				otherCollider->GetCheezyObject()->OnCollisionExit(Collision2D{ glm::vec2(0.0f), obj1Collider });
-			}
-			else
-			{
-				(*cheezyObject)->OnCollision(*existingCollision);
-				otherCollider->GetCheezyObject()->OnCollision({ existingCollision->PushVector * -1.0f, obj1Collider });
-				collisions.erase(existingCollision);
-			}
-		}
-		for (const Collision2D& collision : collisions)
-		{
-			(*cheezyObject)->OnCollisionEnter(collision);
-			collision.OtherCollider->GetCheezyObject()->OnCollisionEnter({ collision.PushVector * -1.0f, obj1Collider });
-		}
-	}
 
 	std::vector<Collision2D> BoxCollider2DComponent::CheckCollisionForObjectWithTransform(const Ref<CheezyObject>& cheezyObject, const Transform2D& transform)
 	{
