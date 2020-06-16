@@ -239,8 +239,9 @@ namespace Cheezy
 
 #pragma endregion staticHelperFunctions
 
-	BoxCollider2DComponent::BoxCollider2DComponent(const glm::vec2& dimensions, const char* tag)
-		: m_Dimensions(dimensions),
+	BoxCollider2DComponent::BoxCollider2DComponent(bool isTrigger, const glm::vec2& dimensions, const char* tag)
+		: m_IsTrigger(isTrigger),
+		m_Dimensions(dimensions),
 		m_Tag(tag),
 		m_Vertices({ glm::vec2(0, 0), {dimensions.x, 0}, {dimensions.x, dimensions.y}, {0, dimensions.y} })
 	{
@@ -290,7 +291,7 @@ namespace Cheezy
 	void BoxCollider2DComponent::OnCollisionEnter(Collision2D collision)
 	{
 		const auto& found = std::find(m_CollidingWith.begin(), m_CollidingWith.end(), collision.OtherCollider);
-		if (found != m_CollidingWith.end())
+		if (found == m_CollidingWith.end())
 		{
 			m_CollidingWith.push_back(collision.OtherCollider);
 		}
@@ -412,12 +413,18 @@ namespace Cheezy
 		const Transform2D& obj1Transform = (*cheezyObject)->GetComponent<Transform2DComponent>()->GetTransform();
 		const Ref<BoxCollider2DComponent>& obj1Collider = (*cheezyObject)->GetComponent<BoxCollider2DComponent>();
 
+		if (!obj1Collider)
+			return;
+
 		std::vector<Collision2D> collisions;
 
 		for (auto& obj2 = otherObjects.begin() + index; obj2 != otherObjects.end(); ++obj2)
 		{
 			const auto& obj2Collider = (*obj2)->GetComponent<BoxCollider2DComponent>();
 			const auto& obj2Transform = (*obj2)->GetComponent<Transform2DComponent>()->GetTransform();
+
+			if (!obj2Collider)
+				continue;
 
 			auto [collision, minPushVector] = BoxCollider2DComponent::CheckCollisionBetweenColliders(obj1Collider, obj1Transform, obj2Collider, obj2Transform);
 
@@ -436,6 +443,47 @@ namespace Cheezy
 
 			if (existingCollision == collisions.end())
 			{
+				if (otherCollider->IsTrigger())
+				{
+					(*cheezyObject)->OnTriggerExit(Collision2D{glm::vec2(0.0f), otherCollider});
+					otherCollider->GetCheezyObject()->OnCollisionExit(Collision2D{ glm::vec2(0.0f), obj1Collider });
+				}
+				else
+				{
+					(*cheezyObject)->OnCollisionExit(Collision2D{ glm::vec2(0.0f), otherCollider });
+					otherCollider->GetCheezyObject()->OnCollisionExit(Collision2D{ glm::vec2(0.0f), obj1Collider });
+				}
+			}
+			else
+			{
+				if (otherCollider->IsTrigger())
+				{
+					(*cheezyObject)->OnTrigger(*existingCollision);
+					otherCollider->GetCheezyObject()->OnTrigger({ existingCollision->PushVector * -1.0f, obj1Collider });
+				}
+				else
+				{
+					(*cheezyObject)->OnCollision(*existingCollision);
+					otherCollider->GetCheezyObject()->OnCollision({ existingCollision->PushVector * -1.0f, obj1Collider });
+				}
+				collisions.erase(existingCollision);
+			}
+		}
+
+		for (const Collision2D& collision : collisions)
+		{
+			if (collision.OtherCollider->IsTrigger())
+			{
+				(*cheezyObject)->OnTriggerEnter(collision);
+				collision.OtherCollider->GetCheezyObject()->OnTriggerEnter({ collision.PushVector * -1.0f, obj1Collider });
+			}
+			else
+			{
+				(*cheezyObject)->OnCollisionEnter(collision);
+				collision.OtherCollider->GetCheezyObject()->OnCollisionEnter({ collision.PushVector * -1.0f, obj1Collider });
+			}
+		}
+	}
 				(*cheezyObject)->OnCollisionExit(Collision2D{ glm::vec2(0.0f), otherCollider });
 				otherCollider->GetCheezyObject()->OnCollisionExit(Collision2D{ glm::vec2(0.0f), obj1Collider });
 			}

@@ -34,20 +34,38 @@ namespace Cheezy
 
 	void CheezyObject::OnCollision(const Collision2D& collision)
 	{
+		CZ_CORE_TRACE("On Collision");
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollision(collision);
 	}
 
 	void CheezyObject::OnCollisionEnter(const Collision2D& collision)
 	{
+		CZ_CORE_TRACE("On Collision Enter");
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollisionEnter(collision);
 	}
 
 	void CheezyObject::OnCollisionExit(const Collision2D& collision)
 	{
+		CZ_CORE_TRACE("On Collision Exit");
 		for (Ref<CheezyComponent>& component : m_Components)
 			component->OnCollisionExit(collision);
+	}
+
+	void CheezyObject::OnTrigger(const Collision2D& collision)
+	{
+		CZ_CORE_TRACE("On Trigger");
+	}
+
+	void CheezyObject::OnTriggerEnter(const Collision2D& collision)
+	{
+		CZ_CORE_TRACE("On Trigger Enter");
+	}
+
+	void CheezyObject::OnTriggerExit(const Collision2D& collision)
+	{
+		CZ_CORE_TRACE("On Trigger Exit");
 	}
 
 	void CheezyObject::OnEvent(Event& e)

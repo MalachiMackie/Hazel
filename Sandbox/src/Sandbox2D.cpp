@@ -41,7 +41,7 @@ void Sandbox2D::OnAttach()
 
 	//Floor Piece
 	auto& floorObj = CreateRef<CheezyObject>();
-	floorObj->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(0.0f)}));
+	floorObj->AddComponent(CreateRef<Transform2DComponent>(Transform2D{ glm::vec3(-1.0f, 0.0f, 0.0f)}));
 	floorObj->AddComponent(CreateRef<FloorScript>());
 	floorObj->AddComponent(CreateRef<BoxCollider2DComponent>());
 	floorObj->SetShape(CreateRef<Quad>(glm::vec3(0.0f), 0.0f, glm::vec2(1.0f), glm::vec4(0.15f, 0.5f, 0.5f, 0.7f)));
