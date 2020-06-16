@@ -7,28 +7,30 @@
 
 namespace Cheezy
 {
-	void RigidBodyComponent::OnCollision(Collision2D collision)
-	{
-		auto& found = std::find_if(m_CurrentCollisions.begin(), m_CurrentCollisions.end(),
-			[&collision](Ref<BoxCollider2DComponent>& currentCol) { return currentCol == collision.OtherCollider; });
-		if (found != m_CurrentCollisions.end())
-		{
-			m_CurrentCollisions.erase(found);
-			m_CurrentCollisions.push_back(collision.OtherCollider);
-		}
-	}
-
-	void RigidBodyComponent::OnCollisionEnter(Collision2D collision)
+	void RigidBodyComponent::OnCollisionEnter(const Collision2D& collision)
 	{
 		m_CurrentCollisions.push_back(collision.OtherCollider);
 	}
 
-	void RigidBodyComponent::OnCollisionExit(Collision2D collision)
+	void RigidBodyComponent::OnCollisionExit(const Collision2D& collision)
 	{
 		auto& found = std::find_if(m_CurrentCollisions.begin(), m_CurrentCollisions.end(),
 			[&collision](Ref<BoxCollider2DComponent>& currentCol) { return currentCol == collision.OtherCollider; });
 		if (found != m_CurrentCollisions.end())
 			m_CurrentCollisions.erase(found);
+	}
+
+	void RigidBodyComponent::OnTriggerEnter(const Collision2D& collision)
+	{
+		m_CurrentTriggers.push_back(collision.OtherCollider);
+	}
+
+	void RigidBodyComponent::OnTriggerExit(const Collision2D& collision)
+	{
+		auto& found = std::find_if(m_CurrentTriggers.begin(), m_CurrentTriggers.end(),
+			[&collision](Ref<BoxCollider2DComponent>& currentCol) { return currentCol == collision.OtherCollider; });
+		if (found != m_CurrentTriggers.end())
+			m_CurrentTriggers.erase(found);
 	}
 
 	void RigidBodyComponent::Init()

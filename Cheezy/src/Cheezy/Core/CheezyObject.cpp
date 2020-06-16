@@ -50,6 +50,24 @@ namespace Cheezy
 			component->OnCollisionExit(collision);
 	}
 
+	void CheezyObject::OnTrigger(const Collision2D& collision)
+	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnTrigger(collision);
+	}
+
+	void CheezyObject::OnTriggerEnter(const Collision2D& collision)
+	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnTriggerEnter(collision);
+	}
+
+	void CheezyObject::OnTriggerExit(const Collision2D& collision)
+	{
+		for (Ref<CheezyComponent>& component : m_Components)
+			component->OnTriggerExit(collision);
+	}
+
 	void CheezyObject::OnEvent(Event& e)
 	{
 		for (Ref<CheezyComponent>& component : m_Components)

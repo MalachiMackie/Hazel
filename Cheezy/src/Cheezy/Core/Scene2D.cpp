@@ -10,6 +10,8 @@ namespace Cheezy
 {
 	void Scene2D::OnFixedUpdate()
 	{
+		BoxCollider2DComponent::CheckTriggerCollisions(m_Objects);
+
 		for (Ref<CheezyObject>& obj : m_Objects)
 			obj->OnFixedUpdate();
 	}

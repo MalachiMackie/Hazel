@@ -87,6 +87,10 @@ namespace Cheezy
 		void OnCollisionEnter(const Collision2D& collision);
 		void OnCollisionExit(const Collision2D& collision);
 
+		void OnTrigger(const Collision2D& collision);
+		void OnTriggerEnter(const Collision2D& collision);
+		void OnTriggerExit(const Collision2D& collision);
+
 		void OnMouseHover();
 		void OnMouseEnter();
 		void OnMouseExit();
