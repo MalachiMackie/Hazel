@@ -28,9 +28,14 @@ namespace Cheezy
 		virtual void OnFixedUpdate() {}
 		virtual void OnUpdate(Timestep ts) {}
 
-		virtual void OnCollision(Collision2D collision) {}
-		virtual void OnCollisionEnter(Collision2D collision) {}
-		virtual void OnCollisionExit(Collision2D collision) {}
+		virtual void OnCollision(const Collision2D& collision) {}
+		virtual void OnCollisionEnter(const Collision2D& collision) {}
+		virtual void OnCollisionExit(const Collision2D& collision) {}
+
+		virtual void OnTrigger(const Collision2D& collision) {}
+		virtual void OnTriggerEnter(const Collision2D& collision) {}
+		virtual void OnTriggerExit(const Collision2D& collision) {}
+
 		virtual void OnEvent(Event& e) {}
 
 		virtual void OnMouseEnter() {}

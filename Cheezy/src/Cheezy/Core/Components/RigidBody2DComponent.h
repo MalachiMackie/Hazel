@@ -21,9 +21,11 @@ namespace Cheezy
 
 		void AddForce(glm::vec2 force);
 
-		virtual void OnCollision(Collision2D collision) override;
-		virtual void OnCollisionEnter(Collision2D collision) override;
-		virtual void OnCollisionExit(Collision2D collision) override;
+		virtual void OnCollisionEnter(const Collision2D& collision) override;
+		virtual void OnCollisionExit(const Collision2D& collision) override;
+
+		virtual void OnTriggerEnter(const Collision2D& collision) override;
+		virtual void OnTriggerExit(const Collision2D& collision) override;
 
 		virtual void Init() override;
 
@@ -35,5 +37,6 @@ namespace Cheezy
 		bool m_UseGravity = false;
 
 		std::vector<Ref<BoxCollider2DComponent>> m_CurrentCollisions;
+		std::vector<Ref<BoxCollider2DComponent>> m_CurrentTriggers;
 	};
 }
